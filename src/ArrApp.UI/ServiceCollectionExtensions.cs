@@ -42,11 +42,14 @@ public static class ServiceCollectionExtensions {
 
         services.AddTransient<PlaceholderViewModel>();
         services.AddTransient<ServerEditViewModel>();
+        services.AddTransient<ServersViewModel>();
+        services.AddTransient<SettingsViewModel>();
+        services.AddTransient<ConfirmViewModel>();
         services.AddSingleton(sp => new TabHostViewModel([
             new TabItem("Library", Placeholder(sp, "Library")),
             new TabItem("Discover", Placeholder(sp, "Discover")),
             new TabItem("Activity", Placeholder(sp, "Activity")),
-            new TabItem("Settings", Placeholder(sp, "Settings")),
+            new TabItem("Settings", sp.GetRequiredService<SettingsViewModel>()),
         ]));
         services.AddSingleton<ShellViewModel>();
         return services;

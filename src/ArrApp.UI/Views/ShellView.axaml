@@ -5,18 +5,10 @@
              x:DataType="vm:ShellViewModel"
              Background="{DynamicResource AppBackgroundBrush}"
              Focusable="True">
+    <!-- Avalonia pads this view by the safe area (system bars) once edge-to-edge is on, so the page and toast sit
+         inside the bars. The overlay layer cancels that padding (see ShellView.axaml.cs) to cover the full screen. -->
     <Grid>
         <ContentControl Content="{Binding Navigation.Current}"/>
-
-        <!-- Scrim + bottom sheet -->
-        <Grid IsVisible="{Binding Sheets.IsOpen}">
-            <Border Background="{DynamicResource ScrimBrush}" PointerPressed="OnScrimPressed"/>
-            <Border VerticalAlignment="Bottom" MinHeight="200"
-                    CornerRadius="{StaticResource RadiusSheet}" Padding="{StaticResource PagePadding}"
-                    Background="{DynamicResource SurfaceBrush}">
-                <ContentControl Content="{Binding Sheets.Current}"/>
-            </Border>
-        </Grid>
 
         <!-- Toast / snackbar, sits above the tab bar. Tap to dismiss. -->
         <Border Classes="toast" IsVisible="{Binding Toasts.Current, Converter={x:Static ObjectConverters.IsNotNull}}"
@@ -26,5 +18,15 @@
                 PointerPressed="OnToastPressed">
             <TextBlock Text="{Binding Toasts.Current.Message}" TextWrapping="Wrap"/>
         </Border>
+
+        <!-- Scrim + bottom sheet: full-bleed, the sheet reaches the screen edge -->
+        <Grid x:Name="OverlayLayer" IsVisible="{Binding Sheets.IsOpen}">
+            <Border Background="{DynamicResource ScrimBrush}" PointerPressed="OnScrimPressed"/>
+            <Border x:Name="SheetHost" VerticalAlignment="Bottom" MinHeight="200"
+                    CornerRadius="{StaticResource RadiusSheet}" Padding="{StaticResource PagePadding}"
+                    Background="{DynamicResource SurfaceBrush}">
+                <ContentControl Content="{Binding Sheets.Current}"/>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

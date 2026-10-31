@@ -1,0 +1,15 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ArrApp.UI.ViewModels"
+             x:Class="ArrApp.UI.Views.ConfirmView"
+             x:DataType="vm:ConfirmViewModel">
+    <StackPanel Spacing="12">
+        <TextBlock Classes="title" Text="{Binding Title}" TextWrapping="Wrap"/>
+        <TextBlock Text="{Binding Message}" TextWrapping="Wrap"/>
+        <UniformGrid Rows="1" ColumnSpacing="8" Margin="0,8,0,0">
+            <Button Content="Cancel" Command="{Binding CancelCommand}" HorizontalAlignment="Stretch"/>
+            <Button Classes="primary" Classes.danger-solid="{Binding IsDestructive}"
+                    Content="{Binding ConfirmText}" Command="{Binding ConfirmCommand}" HorizontalAlignment="Stretch"/>
+        </UniformGrid>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,21 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ArrApp.UI.ViewModels"
+             x:Class="ArrApp.UI.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+    <StackPanel Spacing="16" Margin="{StaticResource PagePadding}">
+        <TextBlock Classes="headline" Text="Settings"/>
+
+        <Button Command="{Binding OpenServersCommand}" HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch" Padding="16,12">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Spacing="2">
+                    <TextBlock Classes="subtitle" Text="Servers"/>
+                    <TextBlock Classes="caption" Text="Add, edit and reorder your Sonarr and Radarr servers"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+                <TextBlock Grid.Column="1" Text="›" FontSize="24" VerticalAlignment="Center"/>
+            </Grid>
+        </Button>
+    </StackPanel>
+</UserControl>

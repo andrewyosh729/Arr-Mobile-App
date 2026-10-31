@@ -8,50 +8,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace ArrApp.UI.Tests;
 
 public class ServerEditViewModelTests {
-    private sealed class FakeTester(Func<ArrType, string, string, ConnectionTestResult> respond) : IArrConnectionTester {
-        public List<(ArrType Type, string Url, string Key)> Calls { get; } = [];
-
-        public Task<ConnectionTestResult> TestAsync(ArrType expected, string baseUrl, string apiKey, CancellationToken cancellationToken = default) {
-            Calls.Add((expected, baseUrl, apiKey));
-            return Task.FromResult(respond(expected, baseUrl, apiKey));
-        }
-    }
-
-    private sealed class MemoryRepository : IServerConnectionRepository {
-        public List<ServerConnection> Items { get; } = [];
-        public List<(int Id, string Version)> Connected { get; } = [];
-        private int _nextId = 1;
-
-        public Task<IReadOnlyList<ServerConnection>> GetAllAsync() => Task.FromResult<IReadOnlyList<ServerConnection>>(Items.ToList());
-        public Task<ServerConnection?> GetAsync(int id) => Task.FromResult(Items.FirstOrDefault(s => s.Id == id));
-        public Task<ServerConnection?> GetDefaultAsync() => Task.FromResult(Items.FirstOrDefault(s => s.IsDefault));
-
-        public Task AddAsync(ServerConnection connection) {
-            connection.Id = _nextId++;
-            Items.Add(connection);
-            return Task.CompletedTask;
-        }
-
-        public Task UpdateAsync(ServerConnection connection) => Task.CompletedTask;
-        public Task DeleteAsync(int id) => Task.CompletedTask;
-        public Task SetDefaultAsync(int id) => Task.CompletedTask;
-        public Task ReorderAsync(IReadOnlyList<int> orderedIds) => Task.CompletedTask;
-
-        public Task MarkConnectedAsync(int id, string version, DateTimeOffset when) {
-            Connected.Add((id, version));
-            return Task.CompletedTask;
-        }
-    }
-
-    private sealed class FakeNavigation : INavigationService {
-        public int Pops { get; private set; }
-        public ViewModelBase? Current => null;
-        public bool CanGoBack => true;
-        public void SetRoot(ViewModelBase root) { }
-        public TViewModel Push<TViewModel>(Action<TViewModel>? configure = null) where TViewModel : ViewModelBase => throw new NotSupportedException();
-        public bool Pop() { Pops++; return true; }
-    }
-
     private sealed record Fixture(ServerEditViewModel Vm, FakeTester Tester, MemoryRepository Repo, FakeNavigation Nav, ToastService Toasts);
 
     private static readonly ConnectionTestResult Ok = ConnectionTestResult.Ok("Sonarr", "4.0.9.2244");

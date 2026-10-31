@@ -1,7 +1,7 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Controls.Platform;
 using ArrApp.UI.ViewModels;
 
 namespace ArrApp.UI.Views;
@@ -15,25 +15,32 @@ public partial class ShellView : UserControl {
         base.OnLoaded(e);
         if (TopLevel.GetTopLevel(this) is { } top) {
             top.BackRequested += OnBackRequested; // Android back button / gesture
-            if (top.InsetsManager is { } insets) {
-                insets.DisplayEdgeToEdgePreference = true; // draw under system bars, pad by the safe area
-                insets.SafeAreaChanged += OnSafeAreaChanged;
-                Padding = insets.SafeAreaPadding;
-            }
+            // Draw under the system bars. Avalonia then pads this view (Padding) by the safe area itself.
+            if (top.InsetsManager is { } insets)
+                insets.DisplayEdgeToEdgePreference = true;
         }
         Focus();
     }
 
     protected override void OnUnloaded(RoutedEventArgs e) {
-        if (TopLevel.GetTopLevel(this) is { } top) {
+        if (TopLevel.GetTopLevel(this) is { } top)
             top.BackRequested -= OnBackRequested;
-            if (top.InsetsManager is { } insets)
-                insets.SafeAreaChanged -= OnSafeAreaChanged;
-        }
         base.OnUnloaded(e);
     }
 
-    private void OnSafeAreaChanged(object? sender, SafeAreaChangedArgs e) => Padding = e.SafeAreaPadding;
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change) {
+        base.OnPropertyChanged(change);
+        if (change.Property == PaddingProperty)
+            UpdateOverlayForSafeArea();
+    }
+
+    // Page and toast stay inside the system bars (the padding). The scrim cancels the padding so it covers the whole
+    // screen, and the sheet grows by the bottom inset so it reaches the edge without its buttons sitting under the nav bar.
+    private void UpdateOverlayForSafeArea() {
+        var safe = Padding;
+        OverlayLayer.Margin = new Thickness(-safe.Left, -safe.Top, -safe.Right, -safe.Bottom);
+        SheetHost.Padding = new Thickness(16, 16, 16, 16 + safe.Bottom);
+    }
 
     private void OnBackRequested(object? sender, RoutedEventArgs e) {
         if (DataContext is ShellViewModel shell)

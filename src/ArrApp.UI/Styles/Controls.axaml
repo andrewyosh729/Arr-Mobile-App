@@ -59,6 +59,11 @@
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Background" Value="Transparent"/>
     </Style>
+    <!-- Disabled chips (e.g. move up on the first row) stay outlined and just fade -->
+    <Style Selector="Button.chip:disabled /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Opacity" Value="0.35"/>
+    </Style>
     <Style Selector="ToggleButton.chip:checked /template/ ContentPresenter#PART_ContentPresenter">
         <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
         <Setter Property="TextElement.Foreground" Value="{DynamicResource OnAccentBrush}"/>
@@ -115,6 +120,31 @@
     </Style>
     <Style Selector="Border.status.success">
         <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}"/>
+    </Style>
+
+    <!-- Small "Default" pill and status dots on server rows -->
+    <Style Selector="Border.pill">
+        <Setter Property="Background" Value="{DynamicResource SurfaceRaisedBrush}"/>
+        <Setter Property="CornerRadius" Value="{StaticResource RadiusPill}"/>
+        <Setter Property="Padding" Value="8,1"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="TextBlock.dot">
+        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="TextBlock.dot.online">
+        <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+    </Style>
+    <Style Selector="TextBlock.dot.offline">
+        <Setter Property="Foreground" Value="{DynamicResource DangerBrush}"/>
+    </Style>
+
+    <!-- Destructive confirm button: solid red instead of the accent -->
+    <Style Selector="Button.primary.danger-solid">
+        <Setter Property="Background" Value="{DynamicResource DangerBrush}"/>
+        <Setter Property="Foreground" Value="White"/>
     </Style>
 
     <!-- Bottom tab bar -->
