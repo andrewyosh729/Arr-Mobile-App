@@ -1,0 +1,12 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ArrApp.UI.ViewModels"
+             x:Class="ArrApp.UI.Views.PlaceholderView"
+             x:DataType="vm:PlaceholderViewModel">
+    <StackPanel Spacing="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Text="{Binding Title}" FontSize="20" HorizontalAlignment="Center"/>
+        <Button Content="Open detail" Command="{Binding OpenDetailCommand}" HorizontalAlignment="Center"/>
+        <Button Content="Show sheet" Command="{Binding ShowSheetCommand}" HorizontalAlignment="Center"/>
+        <Button Content="Back" Command="{Binding BackCommand}" IsVisible="{Binding CanGoBack}" HorizontalAlignment="Center"/>
+    </StackPanel>
+</UserControl>

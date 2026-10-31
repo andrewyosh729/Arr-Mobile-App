@@ -9,5 +9,6 @@
   <Folder Name="/tests/">
     <Project Path="tests/ArrApp.Core.Tests/ArrApp.Core.Tests.csproj" />
     <Project Path="tests/ArrApp.Data.Tests/ArrApp.Data.Tests.csproj" />
+    <Project Path="tests/ArrApp.UI.Tests/ArrApp.UI.Tests.csproj" />
   </Folder>
 </Solution>

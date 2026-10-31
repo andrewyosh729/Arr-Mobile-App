@@ -2,8 +2,8 @@ using Avalonia.Controls;
 
 namespace ArrApp.UI.Views;
 
-public partial class MainView : UserControl {
-    public MainView() {
+public partial class TabHostView : UserControl {
+    public TabHostView() {
         InitializeComponent();
     }
 }

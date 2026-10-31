@@ -19,7 +19,7 @@ public partial class App : Application {
     public override void OnFrameworkInitializationCompleted() {
         Services = new ServiceCollection().AddArrApp().BuildServiceProvider();
 
-        var mainView = new MainView { DataContext = Services.GetRequiredService<MainViewModel>() };
+        var shellView = new ShellView { DataContext = Services.GetRequiredService<ShellViewModel>() };
 
         switch (ApplicationLifetime) {
             case IClassicDesktopStyleApplicationLifetime desktop:
@@ -27,11 +27,11 @@ public partial class App : Application {
                     Title = "Arr",
                     Width = 400,
                     Height = 800,
-                    Content = mainView,
+                    Content = shellView,
                 };
                 break;
             case ISingleViewApplicationLifetime singleView:
-                singleView.MainView = mainView;
+                singleView.MainView = shellView;
                 break;
         }
 

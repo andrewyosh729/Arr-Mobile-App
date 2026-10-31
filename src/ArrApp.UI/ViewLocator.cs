@@ -13,7 +13,9 @@ namespace ArrApp.UI;
 /// </summary>
 public class ViewLocator : IDataTemplate {
     private static readonly Dictionary<Type, Func<Control>> Views = new() {
-        [typeof(MainViewModel)] = () => new MainView(),
+        [typeof(ShellViewModel)] = () => new ShellView(),
+        [typeof(TabHostViewModel)] = () => new TabHostView(),
+        [typeof(PlaceholderViewModel)] = () => new PlaceholderView(),
     };
 
     public Control? Build(object? param) {
