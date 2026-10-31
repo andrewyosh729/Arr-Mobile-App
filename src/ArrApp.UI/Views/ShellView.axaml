@@ -3,16 +3,17 @@
              xmlns:vm="using:ArrApp.UI.ViewModels"
              x:Class="ArrApp.UI.Views.ShellView"
              x:DataType="vm:ShellViewModel"
+             Background="{DynamicResource AppBackgroundBrush}"
              Focusable="True">
     <Grid>
         <ContentControl Content="{Binding Navigation.Current}"/>
 
         <!-- Scrim + bottom sheet -->
         <Grid IsVisible="{Binding Sheets.IsOpen}">
-            <Border Background="#99000000" PointerPressed="OnScrimPressed"/>
+            <Border Background="{DynamicResource ScrimBrush}" PointerPressed="OnScrimPressed"/>
             <Border VerticalAlignment="Bottom" MinHeight="200"
-                    CornerRadius="16,16,0,0" Padding="16"
-                    Background="{DynamicResource SystemRegionColor}">
+                    CornerRadius="{StaticResource RadiusSheet}" Padding="{StaticResource PagePadding}"
+                    Background="{DynamicResource SurfaceBrush}">
                 <ContentControl Content="{Binding Sheets.Current}"/>
             </Border>
         </Grid>

@@ -2,13 +2,23 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="ArrApp.UI.App"
              xmlns:local="using:ArrApp.UI"
-             RequestedThemeVariant="Default">
+             RequestedThemeVariant="Dark">
+    <!-- Dark-first. A user-facing theme setting (system/light/dark) comes with F-605. -->
 
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
 
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://ArrApp.UI/Styles/Tokens.axaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="avares://ArrApp.UI/Styles/Controls.axaml"/>
     </Application.Styles>
 </Application>
