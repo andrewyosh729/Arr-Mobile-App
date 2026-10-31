@@ -1,7 +1,10 @@
 using System;
 using System.IO;
+using System.Net.Http;
+using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using ArrApp.Core;
+using ArrApp.Core.Api;
 using ArrApp.Data;
 using Microsoft.Extensions.Logging;
 using ArrApp.UI.Errors;
@@ -22,6 +25,9 @@ public static class ServiceCollectionExtensions {
         // Persistence. IApiKeyProtector is supplied per platform (F-109); nothing resolves the repository until then.
         services.AddSingleton<IAppDatabase>(_ => new AppDatabase(Path.Combine(AppPaths.DataDirectory, "arr.db")));
         services.AddSingleton<IServerConnectionRepository, ServerConnectionRepository>();
+
+        // One shared HttpClient; ArrHttpClient enforces its own per-request timeout.
+        services.AddSingleton<IArrConnectionTester>(_ => new ArrConnectionTester(new HttpClient { Timeout = Timeout.InfiniteTimeSpan }));
 
         services.AddSingleton<ToastService>();
         services.AddSingleton<IToastService>(sp => sp.GetRequiredService<ToastService>());
