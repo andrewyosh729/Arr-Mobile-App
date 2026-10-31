@@ -86,7 +86,8 @@ Legend: `[ ]` not started · `[x]` done. IDs are stable and never reused.
 
 ### Phase 0: Foundation
 
-- [ ] **F-001: Finish repository cleanup.** `master` (the Rider project at the repo root) is now the working branch and GitHub default. Remaining: decide what happens to the old `main` branch (it has unrelated history containing only `LICENSE` and `README.md`); bring `LICENSE` and `README.md` onto `master`; retire the old outer clone on disk so there's a single local working copy; confirm `bin/` and `obj/` stay ignored.
+- [x] **F-001a: Bring `LICENSE` and `README.md` onto `master`; confirm `bin/` and `obj/` stay ignored.** _(Done: copied from `origin/main`; ignore rules verified.)_
+- [ ] **F-001b: Retire the old `main` branch and the old outer clone.** Needs the owner: `main` (unrelated history, now superseded) should be deleted on GitHub, and the old outer clone on disk removed so there's a single working copy. Left to the owner because both are destructive.
 - [ ] **F-002: Convert to a cross-platform Avalonia solution.** The current project is the desktop-only template (`WinExe`, `Avalonia.Desktop`). Restructure it into a shared UI project plus Desktop, Android and iOS heads (Avalonia 12 / .NET 10), and verify the app launches on Desktop and an Android emulator.
 - [ ] **F-003: Add Core / Data / test projects.** Create `ArrApp.Core`, `ArrApp.Data` and the test projects, set up references, and pick a test framework (xUnit proposed).
 - [ ] **F-004: DI and app bootstrapping.** Service container, ViewModel resolution, and replace `ViewLocator` reflection with a trim-safe mapping.
