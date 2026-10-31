@@ -2,6 +2,7 @@ using ArrApp.Core;
 using ArrApp.Core.Api;
 using ArrApp.UI.Navigation;
 using ArrApp.UI.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ArrApp.UI.Tests;
 
@@ -75,4 +76,16 @@ internal sealed class FakeNavigation : INavigationService {
     public void SetRoot(ViewModelBase root) { }
     public TViewModel Push<TViewModel>(Action<TViewModel>? configure = null) where TViewModel : ViewModelBase => throw new NotSupportedException();
     public bool Pop() { Pops++; return true; }
+}
+
+/// <summary>The real app container with storage and the network swapped for fakes, and logs sent to a temp folder.</summary>
+internal static class TestApp {
+    public static ServiceProvider Build(IServerConnectionRepository repository, IArrConnectionTester? tester = null) {
+        var logs = Path.Combine(Path.GetTempPath(), "arrapp-ui-tests-logs");
+        return new ServiceCollection()
+            .AddArrApp(logs)
+            .AddSingleton<IServerConnectionRepository>(repository)
+            .AddSingleton<IArrConnectionTester>(tester ?? new FakeTester((type, _, _) => ConnectionTestResult.Ok(type.ToString(), "4.0.9.2244")))
+            .BuildServiceProvider();
+    }
 }

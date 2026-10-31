@@ -45,6 +45,8 @@ public static class ServiceCollectionExtensions {
         services.AddTransient<ServersViewModel>();
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<ConfirmViewModel>();
+        services.AddTransient<WelcomeViewModel>();
+        services.AddSingleton<ArrContext>();
         services.AddSingleton(sp => new TabHostViewModel([
             new TabItem("Library", Placeholder(sp, "Library")),
             new TabItem("Discover", Placeholder(sp, "Discover")),

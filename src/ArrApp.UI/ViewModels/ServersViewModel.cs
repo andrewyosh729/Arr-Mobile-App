@@ -19,7 +19,8 @@ public sealed partial class ServersViewModel(
     INavigationService navigation,
     IBottomSheetService sheets,
     IToastService toasts,
-    IErrorReporter errors) : ViewModelBase {
+    IErrorReporter errors,
+    ArrContext context) : ViewModelBase {
     private CancellationTokenSource? _statusCts;
 
     public ObservableCollection<ServerItemViewModel> Items { get; } = [];
@@ -35,6 +36,7 @@ public sealed partial class ServersViewModel(
             foreach (var server in all)
                 Items.Add(new ServerItemViewModel(server));
             UpdateOrderState();
+            await context.RefreshAsync(); // servers may have been added, edited or deleted
             _ = RefreshStatusesAsync();
         } catch (Exception ex) {
             errors.Report(ex, "Couldn't load your servers.");

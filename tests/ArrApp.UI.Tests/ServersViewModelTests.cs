@@ -31,6 +31,7 @@ public class ServersViewModelTests {
                 .AddSingleton<ToastService>()
                 .AddSingleton<IToastService>(sp => sp.GetRequiredService<ToastService>())
                 .AddSingleton<IErrorReporter, ErrorReporter>()
+                .AddSingleton<ArrContext>()
                 .AddTransient<ServerEditViewModel>()
                 .AddTransient<ConfirmViewModel>()
                 .AddTransient<ServersViewModel>()

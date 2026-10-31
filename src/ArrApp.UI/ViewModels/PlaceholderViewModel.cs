@@ -1,4 +1,5 @@
 using System;
+using ArrApp.Core;
 using ArrApp.UI.Errors;
 using ArrApp.UI.Navigation;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -7,7 +8,10 @@ using CommunityToolkit.Mvvm.Input;
 namespace ArrApp.UI.ViewModels;
 
 /// <summary>Stand-in page that exercises push/pop/sheet until real screens exist.</summary>
-public sealed partial class PlaceholderViewModel(INavigationService navigation, IBottomSheetService sheets, IToastService toasts) : ViewModelBase {
+public sealed partial class PlaceholderViewModel(INavigationService navigation, IBottomSheetService sheets, IToastService toasts, ArrContext context) : ViewModelBase {
+    /// <summary>Shown on the page so it is visible which server the app has landed on.</summary>
+    public ArrContext Context { get; } = context;
+
     [ObservableProperty]
     private string _title = "";
 

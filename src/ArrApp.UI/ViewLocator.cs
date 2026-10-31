@@ -20,6 +20,7 @@ public class ViewLocator : IDataTemplate {
         [typeof(ServersViewModel)] = () => new ServersView(),
         [typeof(SettingsViewModel)] = () => new SettingsView(),
         [typeof(ConfirmViewModel)] = () => new ConfirmView(),
+        [typeof(WelcomeViewModel)] = () => new WelcomeView(),
     };
 
     public Control? Build(object? param) {

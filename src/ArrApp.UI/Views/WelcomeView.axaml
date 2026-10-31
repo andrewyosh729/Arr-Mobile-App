@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ArrApp.UI.ViewModels"
+             x:Class="ArrApp.UI.Views.WelcomeView"
+             x:DataType="vm:WelcomeViewModel">
+    <Grid RowDefinitions="*,Auto" Margin="{StaticResource PagePadding}">
+        <StackPanel Grid.Row="0" Spacing="16" VerticalAlignment="Center">
+            <!-- Sonarr and Radarr accents side by side as the app mark -->
+            <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
+                <Border Width="56" Height="56" CornerRadius="28" Background="#35C5F4">
+                    <TextBlock Text="S" FontSize="26" FontWeight="Bold" Foreground="{DynamicResource OnAccentBrush}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <Border Width="56" Height="56" CornerRadius="28" Background="#FFC230">
+                    <TextBlock Text="R" FontSize="26" FontWeight="Bold" Foreground="{DynamicResource OnAccentBrush}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+            </StackPanel>
+
+            <TextBlock Classes="headline" Text="Welcome" HorizontalAlignment="Center"/>
+            <TextBlock Text="Manage your Sonarr and Radarr servers from one app: browse your library, add new shows and movies, and keep an eye on downloads."
+                       TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" MaxWidth="360"
+                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Spacing="8" Margin="0,0,0,16">
+            <Button Classes="primary" Content="Add your first server" HorizontalAlignment="Stretch"
+                    Command="{Binding AddServerCommand}"/>
+            <TextBlock Classes="caption" TextAlignment="Center" TextWrapping="Wrap"
+                       Text="You'll need the server's address and its API key (Settings → General → Security)."/>
+        </StackPanel>
+    </Grid>
+</UserControl>

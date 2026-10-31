@@ -1,4 +1,3 @@
-using ArrApp.UI;
 using ArrApp.UI.Navigation;
 using ArrApp.UI.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,12 +5,20 @@ using Microsoft.Extensions.DependencyInjection;
 namespace ArrApp.UI.Tests;
 
 public class NavigationTests {
-    private static ServiceProvider Build() => new ServiceCollection().AddArrApp().BuildServiceProvider();
+    /// <summary>A shell that has finished starting up with one saved server, so it is showing the main tabs.</summary>
+    private static async Task<(ServiceProvider Services, ShellViewModel Shell)> StartAsync() {
+        var repo = new MemoryRepository();
+        await repo.AddAsync(new Core.ServerConnection { Name = "Home", ArrType = Core.ArrType.Sonarr, BaseUrl = "http://home", ApiKey = "KEY" });
+        var services = TestApp.Build(repo);
+        var shell = services.GetRequiredService<ShellViewModel>();
+        await shell.InitializeAsync();
+        return (services, shell);
+    }
 
     [Fact]
-    public void Shell_Starts_On_Tab_Host_With_Nothing_To_Go_Back_To() {
-        using var sp = Build();
-        var shell = sp.GetRequiredService<ShellViewModel>();
+    public async Task Shell_Starts_On_Tab_Host_With_Nothing_To_Go_Back_To() {
+        var (services, shell) = await StartAsync();
+        using var _ = services;
 
         Assert.IsType<TabHostViewModel>(shell.Navigation.Current);
         Assert.False(shell.Navigation.CanGoBack);
@@ -19,9 +26,9 @@ public class NavigationTests {
     }
 
     [Fact]
-    public void Push_Passes_Parameters_And_Pop_Returns_To_Previous() {
-        using var sp = Build();
-        var shell = sp.GetRequiredService<ShellViewModel>();
+    public async Task Push_Passes_Parameters_And_Pop_Returns_To_Previous() {
+        var (services, shell) = await StartAsync();
+        using var _ = services;
         var root = shell.Navigation.Current;
 
         var page = shell.Navigation.Push<PlaceholderViewModel>(vm => vm.Title = "Series 1");
@@ -36,9 +43,9 @@ public class NavigationTests {
     }
 
     [Fact]
-    public void Back_Closes_Sheet_Before_Popping_Page() {
-        using var sp = Build();
-        var shell = sp.GetRequiredService<ShellViewModel>();
+    public async Task Back_Closes_Sheet_Before_Popping_Page() {
+        var (services, shell) = await StartAsync();
+        using var _ = services;
         shell.Navigation.Push<PlaceholderViewModel>();
         shell.Sheets.Show<PlaceholderViewModel>();
 
@@ -51,10 +58,10 @@ public class NavigationTests {
     }
 
     [Fact]
-    public void Navigation_Raises_PropertyChanged_For_Current() {
-        using var sp = Build();
-        var nav = sp.GetRequiredService<NavigationService>();
-        nav.SetRoot(sp.GetRequiredService<TabHostViewModel>());
+    public async Task Navigation_Raises_PropertyChanged_For_Current() {
+        var (services, shell) = await StartAsync();
+        using var _ = services;
+        var nav = services.GetRequiredService<NavigationService>();
         var changed = new List<string?>();
         nav.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
 
