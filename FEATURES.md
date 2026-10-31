@@ -91,7 +91,7 @@ Legend: `[ ]` not started · `[x]` done. IDs are stable and never reused.
 - [x] **F-002a: Shared UI project + Desktop head.** Split the desktop-only template into `src/ArrApp.UI` (shared App, `MainView` UserControl, ViewModels) and `src/ArrApp.Desktop`. Solution is `ArrApp.slnx`; builds on Desktop.
 - [ ] **F-002b: Android and iOS heads.** Projects are scaffolded in `src/ArrApp.Android` and `src/ArrApp.iOS` but are **not in the solution and unverified**: the `android` workload isn't installed on this machine (`dotnet workload install android`; iOS needs a Mac). Remaining: install workload, fix up the scaffold (theme/resources/icon), add to the solution, verify launch on an Android emulator.
 - [x] **F-003: Add Core / Data / test projects.** Create `ArrApp.Core`, `ArrApp.Data` and the test projects, set up references, and pick a test framework. _(Done: xUnit; solution is `ArrApp.slnx`.)_
-- [ ] **F-004: DI and app bootstrapping.** Service container, ViewModel resolution, and replace `ViewLocator` reflection with a trim-safe mapping.
+- [x] **F-004: DI and app bootstrapping.** Service container, ViewModel resolution, and replace `ViewLocator` reflection with a trim-safe mapping.
 - [ ] **F-005: Navigation service.** Stack navigation (push/pop with params), tab host, bottom-sheet host, Android back-button handling.
 - [ ] **F-006: Design system and mobile shell.** Color/spacing/typography tokens, light/dark, per-Arr accent color, safe-area insets, base control styles (buttons, inputs, list rows, chips), touch target ≥ 44px.
 - [ ] **F-007: Error handling and logging baseline.** Global exception handler, user-facing error toast/snackbar, file/debug logging.

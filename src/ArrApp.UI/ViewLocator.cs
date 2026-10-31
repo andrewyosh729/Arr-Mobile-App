@@ -1,33 +1,29 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using ArrApp.UI.ViewModels;
+using ArrApp.UI.Views;
 
 namespace ArrApp.UI;
 
 /// <summary>
-/// Given a view model, returns the corresponding view if possible.
+/// Maps view models to views through an explicit, trim-safe registry (no reflection).
+/// Register new pairs in <see cref="Views"/> as screens are added.
 /// </summary>
-[RequiresUnreferencedCode(
-    "Default implementation of ViewLocator involves reflection which may be trimmed away.",
-    Url = "https://docs.avaloniaui.net/docs/concepts/view-locator")]
 public class ViewLocator : IDataTemplate {
+    private static readonly Dictionary<Type, Func<Control>> Views = new() {
+        [typeof(MainViewModel)] = () => new MainView(),
+    };
+
     public Control? Build(object? param) {
         if (param is null)
             return null;
 
-        var name = param.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
-        var type = Type.GetType(name);
-
-        if (type != null) {
-            return (Control)Activator.CreateInstance(type)!;
-        }
-
-        return new TextBlock { Text = "Not Found: " + name };
+        return Views.TryGetValue(param.GetType(), out var factory)
+            ? factory()
+            : new TextBlock { Text = "No view registered for " + param.GetType().Name };
     }
 
-    public bool Match(object? data) {
-        return data is ViewModelBase;
-    }
+    public bool Match(object? data) => data is ViewModelBase;
 }

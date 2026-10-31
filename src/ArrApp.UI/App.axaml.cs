@@ -1,19 +1,25 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Microsoft.Extensions.DependencyInjection;
 using ArrApp.UI.ViewModels;
 using ArrApp.UI.Views;
 
 namespace ArrApp.UI;
 
 public partial class App : Application {
+    public IServiceProvider Services { get; private set; } = null!;
+
     public override void Initialize() {
         AvaloniaXamlLoader.Load(this);
     }
 
     public override void OnFrameworkInitializationCompleted() {
-        var mainView = new MainView { DataContext = new MainViewModel() };
+        Services = new ServiceCollection().AddArrApp().BuildServiceProvider();
+
+        var mainView = new MainView { DataContext = Services.GetRequiredService<MainViewModel>() };
 
         switch (ApplicationLifetime) {
             case IClassicDesktopStyleApplicationLifetime desktop:
