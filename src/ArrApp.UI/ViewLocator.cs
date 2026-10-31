@@ -16,6 +16,7 @@ public class ViewLocator : IDataTemplate {
         [typeof(ShellViewModel)] = () => new ShellView(),
         [typeof(TabHostViewModel)] = () => new TabHostView(),
         [typeof(PlaceholderViewModel)] = () => new PlaceholderView(),
+        [typeof(ServerEditViewModel)] = () => new ServerEditView(),
     };
 
     public Control? Build(object? param) {

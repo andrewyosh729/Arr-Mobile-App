@@ -41,6 +41,7 @@ public static class ServiceCollectionExtensions {
         services.AddSingleton<IBottomSheetService>(sp => sp.GetRequiredService<BottomSheetService>());
 
         services.AddTransient<PlaceholderViewModel>();
+        services.AddTransient<ServerEditViewModel>();
         services.AddSingleton(sp => new TabHostViewModel([
             new TabItem("Library", Placeholder(sp, "Library")),
             new TabItem("Discover", Placeholder(sp, "Discover")),

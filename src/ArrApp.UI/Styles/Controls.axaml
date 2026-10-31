@@ -24,7 +24,7 @@
     </Style>
 
     <!-- Buttons: every tappable control is at least 44x44 -->
-    <Style Selector="Button">
+    <Style Selector="Button, ToggleButton">
         <Setter Property="MinHeight" Value="{StaticResource MinTouchTarget}"/>
         <Setter Property="MinWidth" Value="{StaticResource MinTouchTarget}"/>
         <Setter Property="Padding" Value="16,8"/>
@@ -99,6 +99,21 @@
         <Setter Property="BorderBrush" Value="{DynamicResource DangerBrush}"/>
     </Style>
     <Style Selector="Border.toast.success">
+        <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}"/>
+    </Style>
+
+    <!-- Inline status panel (connection test result) -->
+    <Style Selector="Border.status">
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrushSubtle}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="{StaticResource RadiusMd}"/>
+        <Setter Property="Padding" Value="16,12"/>
+    </Style>
+    <Style Selector="Border.status.error">
+        <Setter Property="BorderBrush" Value="{DynamicResource DangerBrush}"/>
+    </Style>
+    <Style Selector="Border.status.success">
         <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}"/>
     </Style>
 

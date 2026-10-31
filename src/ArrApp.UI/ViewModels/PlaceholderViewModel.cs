@@ -31,6 +31,10 @@ public sealed partial class PlaceholderViewModel(INavigationService navigation, 
             ok ? ToastKind.Success : ToastKind.Error);
     }
 
+    // Dev entry point until the servers list (F-106) exists.
+    [RelayCommand]
+    private void AddServer() => navigation.Push<ServerEditViewModel>();
+
     [RelayCommand]
     private void Back() => navigation.Pop();
 

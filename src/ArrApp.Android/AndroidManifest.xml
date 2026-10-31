@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- allowBackup is off on purpose: a restored database without its Keystore key could never decrypt the stored API keys. -->
-    <application android:label="Arr" android:allowBackup="false"></application>
+    <!-- usesCleartextTraffic: self-hosted Arrs are very commonly plain http:// on a LAN, so http is allowed (see FEATURES.md Q5). -->
+    <application android:label="Arr" android:allowBackup="false" android:usesCleartextTraffic="true"></application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 </manifest>

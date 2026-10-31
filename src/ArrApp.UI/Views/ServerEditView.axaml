@@ -1,0 +1,69 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ArrApp.UI.ViewModels"
+             x:Class="ArrApp.UI.Views.ServerEditView"
+             x:DataType="vm:ServerEditViewModel">
+    <DockPanel>
+        <!-- Header -->
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*" Margin="8,8,16,0">
+            <Button Grid.Column="0" Content="‹ Back" Classes="chip" Command="{Binding BackCommand}"/>
+            <TextBlock Grid.Column="1" Classes="title" Text="{Binding Title}"
+                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Grid>
+
+        <ScrollViewer>
+            <StackPanel Spacing="16" Margin="{StaticResource PagePadding}">
+
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="caption" Text="TYPE"/>
+                    <UniformGrid Rows="1" ColumnSpacing="8">
+                        <ToggleButton Classes="chip" Content="Sonarr (TV)" IsChecked="{Binding IsSonarr}"
+                                      HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                        <ToggleButton Classes="chip" Content="Radarr (Movies)" IsChecked="{Binding IsRadarr}"
+                                      HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                    </UniformGrid>
+                </StackPanel>
+
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="caption" Text="NAME"/>
+                    <TextBox Text="{Binding Name}" PlaceholderText="{Binding NamePlaceholder}"/>
+                </StackPanel>
+
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="caption" Text="ADDRESS"/>
+                    <TextBox Text="{Binding Url}" PlaceholderText="192.168.1.10:8989 or https://host/sonarr"/>
+                </StackPanel>
+
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="caption" Text="API KEY"/>
+                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                        <TextBox Grid.Column="0" Text="{Binding ApiKey}" PasswordChar="●"
+                                 RevealPassword="{Binding ShowApiKey}"/>
+                        <ToggleButton Grid.Column="1" Classes="chip" Content="Show"
+                                      IsChecked="{Binding ShowApiKey}"/>
+                        <Button Grid.Column="2" Classes="chip" Content="Paste" Click="OnPasteClicked"/>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Inline test status -->
+                <Border Classes="status" IsVisible="{Binding HasStatus}"
+                        Classes.success="{Binding IsSuccess}" Classes.error="{Binding IsFailed}">
+                    <StackPanel Spacing="8">
+                        <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsTesting}"/>
+                        <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Spacing="8">
+                    <Button Content="Test connection" HorizontalAlignment="Stretch"
+                            Command="{Binding TestConnectionCommand}" IsEnabled="{Binding !IsBusy}"/>
+                    <Button Classes="primary" Content="Save" HorizontalAlignment="Stretch"
+                            Command="{Binding SaveCommand}" IsEnabled="{Binding !IsBusy}"/>
+                    <Button Classes="danger" Content="Save anyway" HorizontalAlignment="Stretch"
+                            Command="{Binding SaveAnywayCommand}" IsVisible="{Binding CanSaveAnyway}"
+                            IsEnabled="{Binding !IsBusy}"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>
