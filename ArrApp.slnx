@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ArrApp.Desktop/ArrApp.Desktop.csproj" />
+    <Project Path="src/ArrApp.UI/ArrApp.UI.csproj" />
+  </Folder>
+</Solution>

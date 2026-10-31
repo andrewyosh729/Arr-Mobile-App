@@ -88,7 +88,8 @@ Legend: `[ ]` not started · `[x]` done. IDs are stable and never reused.
 
 - [x] **F-001a: Bring `LICENSE` and `README.md` onto `master`; confirm `bin/` and `obj/` stay ignored.** _(Done: copied from `origin/main`; ignore rules verified.)_
 - [ ] **F-001b: Retire the old `main` branch and the old outer clone.** Needs the owner: `main` (unrelated history, now superseded) should be deleted on GitHub, and the old outer clone on disk removed so there's a single working copy. Left to the owner because both are destructive.
-- [ ] **F-002: Convert to a cross-platform Avalonia solution.** The current project is the desktop-only template (`WinExe`, `Avalonia.Desktop`). Restructure it into a shared UI project plus Desktop, Android and iOS heads (Avalonia 12 / .NET 10), and verify the app launches on Desktop and an Android emulator.
+- [x] **F-002a: Shared UI project + Desktop head.** Split the desktop-only template into `src/ArrApp.UI` (shared App, `MainView` UserControl, ViewModels) and `src/ArrApp.Desktop`. Solution is `ArrApp.slnx`; builds on Desktop.
+- [ ] **F-002b: Android and iOS heads.** Projects are scaffolded in `src/ArrApp.Android` and `src/ArrApp.iOS` but are **not in the solution and unverified**: the `android` workload isn't installed on this machine (`dotnet workload install android`; iOS needs a Mac). Remaining: install workload, fix up the scaffold (theme/resources/icon), add to the solution, verify launch on an Android emulator.
 - [ ] **F-003: Add Core / Data / test projects.** Create `ArrApp.Core`, `ArrApp.Data` and the test projects, set up references, and pick a test framework (xUnit proposed).
 - [ ] **F-004: DI and app bootstrapping.** Service container, ViewModel resolution, and replace `ViewLocator` reflection with a trim-safe mapping.
 - [ ] **F-005: Navigation service.** Stack navigation (push/pop with params), tab host, bottom-sheet host, Android back-button handling.

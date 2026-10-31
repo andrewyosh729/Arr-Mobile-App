@@ -1,7 +1,8 @@
-﻿using Avalonia;
+using Avalonia;
 using System;
+using ArrApp.UI;
 
-namespace Arr_Mobile_App;
+namespace ArrApp.Desktop;
 
 sealed class Program {
     // Initialization code. Don't use any Avalonia, third-party APIs or any
