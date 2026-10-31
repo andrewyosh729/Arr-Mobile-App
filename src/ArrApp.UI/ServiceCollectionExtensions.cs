@@ -1,12 +1,25 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using ArrApp.UI.Errors;
+using ArrApp.UI.Logging;
 using ArrApp.UI.Navigation;
 using ArrApp.UI.ViewModels;
 
 namespace ArrApp.UI;
 
 public static class ServiceCollectionExtensions {
-    public static IServiceCollection AddArrApp(this IServiceCollection services) {
+    public static IServiceCollection AddArrApp(this IServiceCollection services, string? logDirectory = null) {
+        services.AddLogging(builder => {
+            builder.SetMinimumLevel(LogLevel.Debug);
+            builder.AddDebug();
+            builder.AddProvider(new FileLoggerProvider(logDirectory ?? AppPaths.LogDirectory));
+        });
+
+        services.AddSingleton<ToastService>();
+        services.AddSingleton<IToastService>(sp => sp.GetRequiredService<ToastService>());
+        services.AddSingleton<IErrorReporter, ErrorReporter>();
+
         services.AddSingleton<NavigationService>();
         services.AddSingleton<INavigationService>(sp => sp.GetRequiredService<NavigationService>());
         services.AddSingleton<BottomSheetService>();

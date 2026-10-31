@@ -86,6 +86,22 @@
         <Setter Property="Padding" Value="{StaticResource PagePadding}"/>
     </Style>
 
+    <!-- Toast / snackbar -->
+    <Style Selector="Border.toast">
+        <Setter Property="Background" Value="{DynamicResource SurfaceRaisedBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrushSubtle}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="{StaticResource RadiusMd}"/>
+        <Setter Property="Padding" Value="16,12"/>
+        <Setter Property="MinHeight" Value="{StaticResource MinTouchTarget}"/>
+    </Style>
+    <Style Selector="Border.toast.error">
+        <Setter Property="BorderBrush" Value="{DynamicResource DangerBrush}"/>
+    </Style>
+    <Style Selector="Border.toast.success">
+        <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}"/>
+    </Style>
+
     <!-- Bottom tab bar -->
     <Style Selector="Border.tabbar">
         <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>

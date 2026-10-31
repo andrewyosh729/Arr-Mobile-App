@@ -17,5 +17,14 @@
                 <ContentControl Content="{Binding Sheets.Current}"/>
             </Border>
         </Grid>
+
+        <!-- Toast / snackbar, sits above the tab bar. Tap to dismiss. -->
+        <Border Classes="toast" IsVisible="{Binding Toasts.Current, Converter={x:Static ObjectConverters.IsNotNull}}"
+                Classes.error="{Binding Toasts.Current.IsError}"
+                Classes.success="{Binding Toasts.Current.IsSuccess}"
+                VerticalAlignment="Bottom" Margin="16,0,16,72"
+                PointerPressed="OnToastPressed">
+            <TextBlock Text="{Binding Toasts.Current.Message}" TextWrapping="Wrap"/>
+        </Border>
     </Grid>
 </UserControl>

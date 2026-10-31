@@ -1,3 +1,4 @@
+using System;
 using ArrApp.UI.Navigation;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -14,6 +15,10 @@ public sealed partial class PlaceholderViewModel(INavigationService navigation, 
 
     [RelayCommand]
     private void ShowSheet() => sheets.Show<PlaceholderViewModel>(vm => vm.Title = Title + " sheet");
+
+    // Dev aid while screens are placeholders: proves the global handler turns a crash into a toast + log entry.
+    [RelayCommand]
+    private void ThrowTestError() => throw new InvalidOperationException("Test error from placeholder page");
 
     [RelayCommand]
     private void Back() => navigation.Pop();

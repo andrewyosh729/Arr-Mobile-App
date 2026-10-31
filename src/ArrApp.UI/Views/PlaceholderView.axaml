@@ -7,6 +7,7 @@
         <TextBlock Classes="title" Text="{Binding Title}" HorizontalAlignment="Center"/>
         <Button Classes="primary" Content="Open detail" Command="{Binding OpenDetailCommand}" HorizontalAlignment="Center"/>
         <Button Content="Show sheet" Command="{Binding ShowSheetCommand}" HorizontalAlignment="Center"/>
+        <Button Classes="danger" Content="Throw test error" Command="{Binding ThrowTestErrorCommand}" HorizontalAlignment="Center"/>
         <Button Content="Back" Command="{Binding BackCommand}" IsVisible="{Binding CanGoBack}" HorizontalAlignment="Center"/>
     </StackPanel>
 </UserControl>

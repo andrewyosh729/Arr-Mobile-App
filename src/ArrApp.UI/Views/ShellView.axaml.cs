@@ -47,6 +47,11 @@ public partial class ShellView : UserControl {
             e.Handled = shell.HandleBack();
     }
 
+    private void OnToastPressed(object? sender, PointerPressedEventArgs e) {
+        if (DataContext is ShellViewModel shell)
+            shell.Toasts.Dismiss();
+    }
+
     private void OnScrimPressed(object? sender, PointerPressedEventArgs e) {
         if (DataContext is ShellViewModel shell)
             shell.Sheets.Hide();
