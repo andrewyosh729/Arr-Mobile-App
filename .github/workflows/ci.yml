@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    name: Build and test (solution incl. Android)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      # The solution includes the Android head, which needs the workload.
+      # ubuntu-latest already ships a JDK and the Android SDK (ANDROID_HOME / JAVA_HOME are set).
+      - name: Install Android workload
+        run: dotnet workload install android
+
+      - name: Build
+        run: dotnet build ArrApp.slnx --configuration Release
+
+      - name: Test
+        run: dotnet test ArrApp.slnx --configuration Release --no-build
+
+  ios-build:
+    name: Build iOS head (compile check)
+    runs-on: macos-latest
+    # The iOS head is scaffolded but has never been built (no Mac available locally),
+    # so this job reports status without blocking merges until it is known-good (F-002d).
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install iOS workload
+        run: dotnet workload install ios
+
+      - name: Build iOS project
+        run: dotnet build src/ArrApp.iOS/ArrApp.iOS.csproj --configuration Release -p:RuntimeIdentifier=iossimulator-arm64
