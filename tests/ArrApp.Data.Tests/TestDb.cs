@@ -23,7 +23,9 @@ public sealed class TestDb : IAsyncDisposable {
     /// <summary>Reversible fake so tests can prove the stored value is not the plain key.</summary>
     public sealed class ReversingProtector : IApiKeyProtector {
         public string Protect(string plainText) => "enc:" + new string(plainText.Reverse().ToArray());
-        public string Unprotect(string protectedText) => new string(protectedText["enc:".Length..].Reverse().ToArray());
+        public string Unprotect(string protectedText) => protectedText.StartsWith("enc:", StringComparison.Ordinal)
+            ? new string(protectedText["enc:".Length..].Reverse().ToArray())
+            : throw new System.Security.Cryptography.CryptographicException("not protected by this fake");
     }
 
     public static ServerConnection Server(string name, ArrType type = ArrType.Sonarr, string key = "secret-key") => new() {

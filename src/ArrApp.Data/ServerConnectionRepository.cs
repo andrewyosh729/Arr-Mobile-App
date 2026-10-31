@@ -109,12 +109,24 @@ public sealed class ServerConnectionRepository(IAppDatabase database, IApiKeyPro
             version, when.ToUnixTimeMilliseconds(), id).ConfigureAwait(false);
     }
 
+    /// <summary>
+    /// A key that can no longer be decrypted (restored backup, new device, reinstalled key store) must not take the whole
+    /// server list down. It comes back empty, so the server shows as unauthorized and the user re-enters the key.
+    /// </summary>
+    private string TryUnprotect(string protectedKey) {
+        try {
+            return protector.Unprotect(protectedKey);
+        } catch (Exception) {
+            return "";
+        }
+    }
+
     private ServerConnection ToModel(Row row) => new() {
         Id = row.Id,
         Name = row.Name,
         ArrType = (ArrType)row.ArrType,
         BaseUrl = row.BaseUrl,
-        ApiKey = protector.Unprotect(row.ProtectedApiKey),
+        ApiKey = TryUnprotect(row.ProtectedApiKey),
         IsDefault = row.IsDefault,
         SortOrder = row.SortOrder,
         CreatedAt = DateTimeOffset.FromUnixTimeMilliseconds(row.CreatedAtUnixMs),

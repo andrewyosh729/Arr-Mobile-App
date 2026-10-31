@@ -108,7 +108,7 @@ Legend: `[ ]` not started · `[x]` done. IDs are stable and never reused.
 - [ ] **F-106: Manage servers screen.** List saved servers with type icon and status, edit, delete (with confirm), set default, reorder.
 - [ ] **F-107: First-run onboarding.** With no servers saved: welcome screen, then add your first server. Afterwards, land on the default server.
 - [ ] **F-108: Arr switcher.** Top-bar switcher that changes the active server and the context (tabs, accent, labels). Remembers the last active server across launches.
-- [ ] **F-109: API key protection.** Don't store keys as plain text: platform secure storage (Android Keystore / iOS Keychain / DPAPI on Windows), or encrypt in SQLite with a key held there. _(See open question Q3.)_
+- [x] **F-109: API key protection.** Don't store keys as plain text: platform secure storage (Android Keystore / iOS Keychain / DPAPI on Windows), or encrypt in SQLite with a key held there. _(See open question Q3.)_ _(Done, Q3 decided: platform secure storage. Windows = DPAPI (current user), Android = AES-GCM key inside the Android Keystore (verified on the emulator; `allowBackup` is off so a restored DB can never be left without its key), iOS = AES-GCM with a Keychain-held key (compile-checked in CI only, not run; see F-002d), Linux/macOS desktop = key file with owner-only permissions, which is weaker and meant for dev only. Heads register their protector via `PlatformServices.ApiKeyProtector` at startup. A key that can no longer be decrypted loads as empty so the user can re-enter it instead of the server list failing. The placeholder page has temporary "Test key vault" and "Throw test error" buttons.)_
 
 ### Phase 2: Shared media foundation
 

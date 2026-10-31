@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <application android:label="Arr" android:allowBackup="true"></application>
+    <!-- allowBackup is off on purpose: a restored database without its Keystore key could never decrypt the stored API keys. -->
+    <application android:label="Arr" android:allowBackup="false"></application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 </manifest>

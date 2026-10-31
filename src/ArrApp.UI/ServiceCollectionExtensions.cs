@@ -22,7 +22,9 @@ public static class ServiceCollectionExtensions {
             builder.AddProvider(new FileLoggerProvider(logDirectory ?? AppPaths.LogDirectory));
         });
 
-        // Persistence. IApiKeyProtector is supplied per platform (F-109); nothing resolves the repository until then.
+        // Persistence. API keys are encrypted by a platform-specific protector (F-109) that the head registers in PlatformServices.
+        services.AddSingleton(_ => PlatformServices.ApiKeyProtector
+            ?? throw new InvalidOperationException("No IApiKeyProtector registered. The platform head must set PlatformServices.ApiKeyProtector at startup."));
         services.AddSingleton<IAppDatabase>(_ => new AppDatabase(Path.Combine(AppPaths.DataDirectory, "arr.db")));
         services.AddSingleton<IServerConnectionRepository, ServerConnectionRepository>();
 
