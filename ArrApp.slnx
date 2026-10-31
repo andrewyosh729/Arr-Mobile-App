@@ -1,6 +1,12 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/ArrApp.Core/ArrApp.Core.csproj" />
+    <Project Path="src/ArrApp.Data/ArrApp.Data.csproj" />
     <Project Path="src/ArrApp.Desktop/ArrApp.Desktop.csproj" />
     <Project Path="src/ArrApp.UI/ArrApp.UI.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ArrApp.Core.Tests/ArrApp.Core.Tests.csproj" />
+    <Project Path="tests/ArrApp.Data.Tests/ArrApp.Data.Tests.csproj" />
   </Folder>
 </Solution>
