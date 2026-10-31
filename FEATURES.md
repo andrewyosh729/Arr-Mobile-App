@@ -100,8 +100,8 @@ Legend: `[ ]` not started · `[x]` done. IDs are stable and never reused.
 
 ### Phase 1: Server connections (first pass, MVP)
 
-- [ ] **F-101: SQLite setup.** DB file in the app data directory, schema versioning/migrations, connection lifetime.
-- [ ] **F-102: `ServerConnection` model and repository.** Fields: `Id`, `Name`, `ArrType` (Sonarr/Radarr), `BaseUrl`, `ApiKey` (see F-109), `IsDefault`, `SortOrder`, `CreatedAt`, `LastConnectedAt`, `LastKnownVersion`. Full CRUD.
+- [x] **F-101: SQLite setup.** DB file in the app data directory, schema versioning/migrations, connection lifetime. _(Done: `sqlite-net-pcl` (Q4 decided); `AppDatabase` owns one lazily-opened connection, DB at `<LocalAppData>/ArrApp/arr.db`, versioned with `PRAGMA user_version` and forward-only raw-SQL `Migrations`; each migration runs in a transaction; a DB newer than the app is refused.)_
+- [x] **F-102: `ServerConnection` model and repository.** Fields: `Id`, `Name`, `ArrType` (Sonarr/Radarr), `BaseUrl`, `ApiKey` (see F-109), `IsDefault`, `SortOrder`, `CreatedAt`, `LastConnectedAt`, `LastKnownVersion`. Full CRUD. _(Done: model + `IServerConnectionRepository` in Core, SQLite implementation in Data. Keys go through `IApiKeyProtector` before storage; the real per-platform protectors are F-109, which must land before any screen saves a key. First server added becomes the default; deleting the default promotes the next.)_
 - [ ] **F-103: Shared Arr HTTP client.** Base URL normalization (scheme, trailing slash, URL-base subpaths like `/sonarr`), `X-Api-Key` header, timeouts, cancellation, mapping of 401 / unreachable / TLS / non-JSON errors to friendly messages.
 - [ ] **F-104: Connection test.** Call `GET /api/v3/system/status`, show app name and version, and reject a mismatch (e.g. a Radarr URL saved as Sonarr).
 - [ ] **F-105: Add/edit server screen.** Type picker, name, URL, API key (with paste and show/hide), "Test connection" button with inline status, save only after a successful test (with an override).

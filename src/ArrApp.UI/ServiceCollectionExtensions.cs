@@ -1,5 +1,8 @@
 using System;
+using System.IO;
 using Microsoft.Extensions.DependencyInjection;
+using ArrApp.Core;
+using ArrApp.Data;
 using Microsoft.Extensions.Logging;
 using ArrApp.UI.Errors;
 using ArrApp.UI.Logging;
@@ -15,6 +18,10 @@ public static class ServiceCollectionExtensions {
             builder.AddDebug();
             builder.AddProvider(new FileLoggerProvider(logDirectory ?? AppPaths.LogDirectory));
         });
+
+        // Persistence. IApiKeyProtector is supplied per platform (F-109); nothing resolves the repository until then.
+        services.AddSingleton<IAppDatabase>(_ => new AppDatabase(Path.Combine(AppPaths.DataDirectory, "arr.db")));
+        services.AddSingleton<IServerConnectionRepository, ServerConnectionRepository>();
 
         services.AddSingleton<ToastService>();
         services.AddSingleton<IToastService>(sp => sp.GetRequiredService<ToastService>());
