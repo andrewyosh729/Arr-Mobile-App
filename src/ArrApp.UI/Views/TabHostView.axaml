@@ -4,6 +4,18 @@
              x:Class="ArrApp.UI.Views.TabHostView"
              x:DataType="vm:TabHostViewModel">
     <DockPanel>
+        <!-- Top bar: the Arr switcher pill, in the active Arr's accent colour -->
+        <Grid DockPanel.Dock="Top" Margin="12,8,12,0">
+            <Button Classes="chip" HorizontalAlignment="Left" Padding="14,0"
+                    Command="{Binding Switcher.ShowCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Ellipse Width="12" Height="12" Fill="{Binding Switcher.AccentBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Switcher.Name}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <TextBlock Text="▾" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+
         <Border DockPanel.Dock="Bottom" Classes="tabbar">
             <ItemsControl ItemsSource="{Binding Tabs}">
                 <ItemsControl.ItemsPanel>

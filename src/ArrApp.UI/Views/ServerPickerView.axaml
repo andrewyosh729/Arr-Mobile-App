@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ArrApp.UI.ViewModels"
+             x:Class="ArrApp.UI.Views.ServerPickerView"
+             x:DataType="vm:ServerPickerViewModel">
+    <StackPanel Spacing="8">
+        <TextBlock Classes="title" Text="Switch server" Margin="0,0,0,4"/>
+
+        <ItemsControl ItemsSource="{Binding Items}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Spacing="8"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:PickerItemViewModel">
+                    <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="12,8"
+                            Command="{Binding $parent[UserControl].((vm:ServerPickerViewModel)DataContext).SelectCommand}"
+                            CommandParameter="{Binding}">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                            <Border Width="36" Height="36" CornerRadius="18" Background="{Binding AccentBrush}">
+                                <TextBlock Text="{Binding Initial}" FontWeight="Bold"
+                                           Foreground="{DynamicResource OnAccentBrush}"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Classes="subtitle" Text="{Binding Name}"/>
+                                <TextBlock Classes="caption" Text="{Binding Url}" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="✓" FontSize="20" VerticalAlignment="Center"
+                                       Foreground="{Binding AccentBrush}" IsVisible="{Binding IsActive}"/>
+                        </Grid>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <Button Classes="chip" Content="Manage servers" HorizontalAlignment="Center" Margin="0,8,0,0"
+                Command="{Binding ManageCommand}"/>
+    </StackPanel>
+</UserControl>

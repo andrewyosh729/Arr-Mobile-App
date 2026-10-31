@@ -12,13 +12,16 @@ public sealed partial class TabItem(string title, ViewModelBase content) : Obser
     private bool _isSelected;
 }
 
-/// <summary>Bottom-tab host. Tab contents are placeholders until the real screens land.</summary>
+/// <summary>Main screen: the Arr switcher in the top bar, the active tab's content, and the bottom tab bar.</summary>
 public sealed partial class TabHostViewModel : ViewModelBase {
-    public TabHostViewModel(IEnumerable<TabItem> tabs) {
+    public TabHostViewModel(IEnumerable<TabItem> tabs, ServerSwitcherViewModel switcher) {
+        Switcher = switcher;
         Tabs = [.. tabs];
         if (Tabs.Count > 0)
             SelectTab(Tabs[0]);
     }
+
+    public ServerSwitcherViewModel Switcher { get; }
 
     public IReadOnlyList<TabItem> Tabs { get; }
 

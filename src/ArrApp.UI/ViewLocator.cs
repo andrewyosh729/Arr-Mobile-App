@@ -21,6 +21,7 @@ public class ViewLocator : IDataTemplate {
         [typeof(SettingsViewModel)] = () => new SettingsView(),
         [typeof(ConfirmViewModel)] = () => new ConfirmView(),
         [typeof(WelcomeViewModel)] = () => new WelcomeView(),
+        [typeof(ServerPickerViewModel)] = () => new ServerPickerView(),
     };
 
     public Control? Build(object? param) {

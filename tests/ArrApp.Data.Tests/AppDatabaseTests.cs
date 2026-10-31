@@ -29,11 +29,12 @@ public class AppDatabaseTests {
         await (await t.Database.GetConnectionAsync()).ExecuteScalarAsync<int>("SELECT 1");
         await t.Database.DisposeAsync();
 
-        var v2 = new Migration(2, "ALTER TABLE ServerConnection ADD COLUMN Note TEXT NULL");
+        var next = Migrations.All[^1].Version + 1;
+        var v2 = new Migration(next, "ALTER TABLE ServerConnection ADD COLUMN Note TEXT NULL");
         await using var upgraded = new AppDatabase(t.Path, [.. Migrations.All, v2]);
         var db = await upgraded.GetConnectionAsync();
 
-        Assert.Equal(2, await db.ExecuteScalarAsync<int>("PRAGMA user_version"));
+        Assert.Equal(next, await db.ExecuteScalarAsync<int>("PRAGMA user_version"));
         await db.ExecuteAsync("UPDATE ServerConnection SET Note = 'ok'"); // column exists
     }
 

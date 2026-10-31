@@ -27,6 +27,7 @@ public static class ServiceCollectionExtensions {
             ?? throw new InvalidOperationException("No IApiKeyProtector registered. The platform head must set PlatformServices.ApiKeyProtector at startup."));
         services.AddSingleton<IAppDatabase>(_ => new AppDatabase(Path.Combine(AppPaths.DataDirectory, "arr.db")));
         services.AddSingleton<IServerConnectionRepository, ServerConnectionRepository>();
+        services.AddSingleton<ISettingsStore, SettingsStore>();
 
         // One shared HttpClient; ArrHttpClient enforces its own per-request timeout.
         services.AddSingleton<IArrConnectionTester>(_ => new ArrConnectionTester(new HttpClient { Timeout = Timeout.InfiniteTimeSpan }));
@@ -47,12 +48,14 @@ public static class ServiceCollectionExtensions {
         services.AddTransient<ConfirmViewModel>();
         services.AddTransient<WelcomeViewModel>();
         services.AddSingleton<ArrContext>();
+        services.AddSingleton<ServerSwitcherViewModel>();
+        services.AddTransient<ServerPickerViewModel>();
         services.AddSingleton(sp => new TabHostViewModel([
             new TabItem("Library", Placeholder(sp, "Library")),
             new TabItem("Discover", Placeholder(sp, "Discover")),
             new TabItem("Activity", Placeholder(sp, "Activity")),
             new TabItem("Settings", sp.GetRequiredService<SettingsViewModel>()),
-        ]));
+        ], sp.GetRequiredService<ServerSwitcherViewModel>()));
         services.AddSingleton<ShellViewModel>();
         return services;
     }

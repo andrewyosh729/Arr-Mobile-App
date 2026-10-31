@@ -21,5 +21,12 @@ public static class Migrations {
                 LastKnownVersion TEXT NULL
             )
             """),
+        new(2,
+            """
+            CREATE TABLE Setting (
+                Key TEXT PRIMARY KEY NOT NULL,
+                Value TEXT NOT NULL
+            )
+            """),
     ];
 }

@@ -80,12 +80,24 @@ internal sealed class FakeNavigation : INavigationService {
 
 /// <summary>The real app container with storage and the network swapped for fakes, and logs sent to a temp folder.</summary>
 internal static class TestApp {
-    public static ServiceProvider Build(IServerConnectionRepository repository, IArrConnectionTester? tester = null) {
+    public static ServiceProvider Build(IServerConnectionRepository repository, IArrConnectionTester? tester = null, ISettingsStore? settings = null) {
         var logs = Path.Combine(Path.GetTempPath(), "arrapp-ui-tests-logs");
         return new ServiceCollection()
             .AddArrApp(logs)
             .AddSingleton<IServerConnectionRepository>(repository)
+            .AddSingleton<ISettingsStore>(settings ?? new MemorySettings())
             .AddSingleton<IArrConnectionTester>(tester ?? new FakeTester((type, _, _) => ConnectionTestResult.Ok(type.ToString(), "4.0.9.2244")))
             .BuildServiceProvider();
+    }
+}
+
+internal sealed class MemorySettings : ISettingsStore {
+    public Dictionary<string, string> Values { get; } = [];
+
+    public Task<string?> GetAsync(string key) => Task.FromResult(Values.TryGetValue(key, out var v) ? v : null);
+
+    public Task SetAsync(string key, string value) {
+        Values[key] = value;
+        return Task.CompletedTask;
     }
 }

@@ -112,7 +112,7 @@ public class OnboardingTests {
         var b = Server("B");
         await repo.AddAsync(b);
         await repo.SetDefaultAsync(b.Id);
-        var context = new ArrContext(repo);
+        var context = new ArrContext(repo, new MemorySettings());
 
         await context.InitializeAsync();
 
@@ -121,7 +121,7 @@ public class OnboardingTests {
 
     [Fact]
     public async Task Context_Is_Empty_When_Nothing_Is_Saved() {
-        var context = new ArrContext(new MemoryRepository());
+        var context = new ArrContext(new MemoryRepository(), new MemorySettings());
 
         await context.InitializeAsync();
 
@@ -137,7 +137,7 @@ public class OnboardingTests {
         var b = Server("B");
         await repo.AddAsync(a);
         await repo.AddAsync(b);
-        var context = new ArrContext(repo);
+        var context = new ArrContext(repo, new MemorySettings());
         await context.InitializeAsync();
         context.SetActive(b); // viewing B although A is the default
 
@@ -158,7 +158,7 @@ public class OnboardingTests {
         var repo = new MemoryRepository();
         var a = Server("A");
         await repo.AddAsync(a);
-        var context = new ArrContext(repo);
+        var context = new ArrContext(repo, new MemorySettings());
         var raised = new List<string?>();
         context.PropertyChanged += (_, e) => raised.Add(e.PropertyName);
 
