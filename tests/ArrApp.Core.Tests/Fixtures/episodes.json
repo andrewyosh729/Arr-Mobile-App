@@ -1,0 +1,25 @@
+[
+  {
+    "seriesId": 12, "tvdbId": 8000001, "episodeFileId": 501, "seasonNumber": 1, "episodeNumber": 1,
+    "title": "Good News About Hell", "airDate": "2022-02-18", "airDateUtc": "2022-02-18T08:00:00Z",
+    "runtime": 57, "overview": "Mark meets a new employee.", "hasFile": true, "monitored": true,
+    "absoluteEpisodeNumber": 1, "unverifiedSceneNumbering": false,
+    "episodeFile": {
+      "seriesId": 12, "seasonNumber": 1, "relativePath": "Season 1/Severance - S01E01 - Good News About Hell WEBDL-1080p.mkv",
+      "path": "/tv/Severance/Season 1/Severance - S01E01 - Good News About Hell WEBDL-1080p.mkv",
+      "size": 1024000000, "dateAdded": "2023-04-03T01:02:03Z", "sceneName": "Severance.S01E01",
+      "languages": [{ "id": 1, "name": "English" }],
+      "quality": { "quality": { "id": 3, "name": "WEBDL-1080p", "source": "web", "resolution": 1080 }, "revision": { "version": 1, "real": 0, "isRepack": false } },
+      "mediaInfo": { "audioChannels": 5.1 }, "qualityCutoffNotMet": false, "id": 501
+    },
+    "id": 9001
+  },
+  {
+    "seriesId": 12, "seasonNumber": 2, "episodeNumber": 10, "title": "TBA",
+    "hasFile": false, "monitored": true, "id": 9002
+  },
+  {
+    "seriesId": 12, "seasonNumber": 0, "episodeNumber": 1, "title": "Special",
+    "airDate": "2022-03-01", "hasFile": false, "monitored": false, "episodeFileId": 0, "id": 9003
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "guid": "https://indexer.example/t/1", "quality": { "quality": { "id": 3, "name": "WEBDL-1080p", "source": "web", "resolution": 1080 }, "revision": { "version": 1, "real": 0, "isRepack": false } },
+    "qualityWeight": 1010, "age": 3, "ageHours": 72.5, "ageMinutes": 4350.0, "size": 2147483648, "indexerId": 2, "indexer": "NZBgeek",
+    "releaseGroup": "GRP", "title": "Severance.S02E01.1080p.WEB.h264-GRP", "fullSeason": false, "seasonNumber": 2,
+    "languages": [{ "id": 1, "name": "English" }], "approved": true, "temporarilyRejected": false, "rejected": false,
+    "tvdbId": 371980, "rejections": [], "publishDate": "2025-01-17T01:00:00Z", "infoUrl": "https://indexer.example/details/1",
+    "downloadAllowed": true, "releaseWeight": 0, "customFormats": [], "customFormatScore": 25, "protocol": "torrent",
+    "seeders": 120, "leechers": 4, "indexerFlags": 1
+  },
+  {
+    "guid": "https://indexer.example/n/2", "quality": { "quality": { "id": 1, "name": "SDTV" } },
+    "age": 700, "size": 400000000, "indexerId": 3, "indexer": "Old Usenet", "title": "Severance.S02.SDTV-OLD",
+    "fullSeason": true, "seasonNumber": 2, "approved": false, "temporarilyRejected": false, "rejected": true,
+    "rejections": ["Quality SDTV is not wanted in profile", "Release is older than retention"], "downloadAllowed": false,
+    "customFormatScore": -5, "protocol": "usenet"
+  }
+]

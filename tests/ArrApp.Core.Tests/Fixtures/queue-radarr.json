@@ -1,0 +1,7 @@
+{
+  "page": 1, "pageSize": 20, "totalRecords": 1,
+  "records": [
+    { "movieId": 7, "size": 40000000000, "title": "Dune.Part.Two.2024.2160p.BluRay-GRP", "sizeleft": 0, "status": "completed",
+      "trackedDownloadStatus": "ok", "trackedDownloadState": "importing", "protocol": "torrent", "downloadClient": "Deluge", "id": 4001 }
+  ]
+}

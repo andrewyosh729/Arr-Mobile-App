@@ -1,0 +1,59 @@
+[
+  {
+    "title": "Severance",
+    "alternateTitles": [{ "title": "Severance (2022)", "sceneSeasonNumber": -1 }],
+    "sortTitle": "severance",
+    "status": "continuing",
+    "ended": false,
+    "overview": "Mark leads a team of office workers whose memories have been surgically divided.",
+    "previousAiring": "2025-03-21T01:00:00Z",
+    "network": "Apple TV+",
+    "airTime": "21:00",
+    "images": [
+      { "coverType": "banner", "url": "/MediaCover/12/banner.jpg?lastWrite=638", "remoteUrl": "https://artworks.thetvdb.com/banner.jpg" },
+      { "coverType": "poster", "url": "/MediaCover/12/poster.jpg?lastWrite=638", "remoteUrl": "https://artworks.thetvdb.com/poster.jpg" },
+      { "coverType": "fanart", "url": "/MediaCover/12/fanart.jpg?lastWrite=638", "remoteUrl": "https://artworks.thetvdb.com/fanart.jpg" }
+    ],
+    "originalLanguage": { "id": 1, "name": "English" },
+    "seasons": [
+      { "seasonNumber": 0, "monitored": false, "statistics": { "episodeFileCount": 0, "episodeCount": 0, "totalEpisodeCount": 2, "sizeOnDisk": 0, "percentOfEpisodes": 0.0 } },
+      { "seasonNumber": 1, "monitored": true, "statistics": { "nextAiring": null, "episodeFileCount": 9, "episodeCount": 9, "totalEpisodeCount": 9, "sizeOnDisk": 9000000000, "releaseGroups": ["GRP"], "percentOfEpisodes": 100.0 } },
+      { "seasonNumber": 2, "monitored": true, "statistics": { "episodeFileCount": 6, "episodeCount": 10, "totalEpisodeCount": 10, "sizeOnDisk": 6000000000, "percentOfEpisodes": 60.0 } }
+    ],
+    "year": 2022,
+    "path": "/tv/Severance",
+    "qualityProfileId": 4,
+    "seasonFolder": true,
+    "monitored": true,
+    "monitorNewItems": "all",
+    "useSceneNumbering": false,
+    "runtime": 50,
+    "tvdbId": 371980,
+    "tvRageId": 0,
+    "tvMazeId": 44458,
+    "tmdbId": 95396,
+    "firstAired": "2022-02-18T00:00:00Z",
+    "lastAired": "2025-03-21T00:00:00Z",
+    "seriesType": "standard",
+    "cleanTitle": "severance",
+    "imdbId": "tt11280740",
+    "titleSlug": "severance",
+    "rootFolderPath": "/tv/",
+    "certification": "TV-MA",
+    "genres": ["Drama", "Mystery", "Sci-Fi & Fantasy"],
+    "tags": [1, 3],
+    "added": "2023-04-02T10:15:30Z",
+    "ratings": { "votes": 120, "value": 8.7 },
+    "statistics": { "seasonCount": 2, "episodeFileCount": 15, "episodeCount": 19, "totalEpisodeCount": 21, "sizeOnDisk": 15000000000, "releaseGroups": ["GRP"], "percentOfEpisodes": 78.9 },
+    "languageProfileId": 1,
+    "id": 12
+  },
+  {
+    "title": "Barely There",
+    "year": 2024,
+    "monitored": false,
+    "images": [],
+    "seasons": [],
+    "id": 13
+  }
+]

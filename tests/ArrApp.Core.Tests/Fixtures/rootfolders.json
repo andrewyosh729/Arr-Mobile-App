@@ -1,0 +1,4 @@
+[
+  { "path": "/tv/", "accessible": true, "freeSpace": 500000000000, "unmappedFolders": [{ "name": "Old", "path": "/tv/Old", "relativePath": "Old" }], "id": 1 },
+  { "path": "/mnt/offline/", "accessible": false, "freeSpace": 0, "unmappedFolders": [], "id": 2 }
+]

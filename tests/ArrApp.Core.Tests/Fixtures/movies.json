@@ -1,0 +1,39 @@
+[
+  {
+    "title": "Dune: Part Two", "originalTitle": "Dune: Part Two",
+    "originalLanguage": { "id": 1, "name": "English" },
+    "alternateTitles": [], "secondaryYearSourceId": 0, "sortTitle": "dune part two",
+    "sizeOnDisk": 18000000000, "status": "released",
+    "overview": "Paul Atreides unites with the Fremen.",
+    "inCinemas": "2024-02-27T00:00:00Z", "physicalRelease": "2024-05-14T00:00:00Z", "digitalRelease": "2024-04-16T00:00:00Z",
+    "releaseDate": "2024-04-16T00:00:00Z",
+    "images": [
+      { "coverType": "poster", "url": "/MediaCover/7/poster.jpg?lastWrite=638", "remoteUrl": "https://image.tmdb.org/t/p/original/poster.jpg" },
+      { "coverType": "fanart", "url": "/MediaCover/7/fanart.jpg?lastWrite=638", "remoteUrl": "https://image.tmdb.org/t/p/original/fanart.jpg" }
+    ],
+    "website": "", "remotePoster": "https://image.tmdb.org/t/p/original/poster.jpg",
+    "year": 2024, "hasFile": true, "youTubeTrailerId": "Way9Dexny3w", "studio": "Legendary Pictures",
+    "path": "/movies/Dune Part Two (2024)", "qualityProfileId": 6, "monitored": true,
+    "minimumAvailability": "announced", "isAvailable": true, "folderName": "/movies/Dune Part Two (2024)",
+    "runtime": 167, "cleanTitle": "dunepart2", "imdbId": "tt15239678", "tmdbId": 693134, "titleSlug": "693134",
+    "rootFolderPath": "/movies/", "certification": "PG-13", "genres": ["Science Fiction", "Adventure"], "tags": [2],
+    "added": "2024-03-01T12:00:00Z",
+    "ratings": { "imdb": { "votes": 500000, "value": 8.5, "type": "user" }, "tmdb": { "votes": 5000, "value": 8.2, "type": "user" } },
+    "movieFile": {
+      "movieId": 7, "relativePath": "Dune Part Two (2024) Bluray-2160p.mkv", "path": "/movies/Dune Part Two (2024)/Dune Part Two (2024) Bluray-2160p.mkv",
+      "size": 18000000000, "dateAdded": "2024-05-15T09:00:00Z", "sceneName": "Dune.Part.Two.2024",
+      "releaseGroup": "GRP", "edition": "", "languages": [{ "id": 1, "name": "English" }],
+      "quality": { "quality": { "id": 19, "name": "Bluray-2160p", "source": "bluray", "resolution": 2160, "modifier": "none" }, "revision": { "version": 1, "real": 0, "isRepack": false } },
+      "mediaInfo": { "videoBitDepth": 10 }, "qualityCutoffNotMet": false, "id": 77
+    },
+    "collection": { "title": "Dune Collection", "tmdbId": 726871 },
+    "popularity": 99.5,
+    "statistics": { "movieFileCount": 1, "sizeOnDisk": 18000000000, "releaseGroups": ["GRP"] },
+    "id": 7
+  },
+  {
+    "title": "Not Out Yet", "year": 2027, "status": "announced", "monitored": true,
+    "inCinemas": null, "physicalRelease": null, "digitalRelease": null,
+    "images": [], "genres": [], "tags": [], "hasFile": false, "id": 8
+  }
+]
