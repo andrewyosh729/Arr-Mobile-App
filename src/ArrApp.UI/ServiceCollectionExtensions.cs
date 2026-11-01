@@ -30,7 +30,9 @@ public static class ServiceCollectionExtensions {
         services.AddSingleton<ISettingsStore, SettingsStore>();
 
         // One shared HttpClient; ArrHttpClient enforces its own per-request timeout.
-        services.AddSingleton<IArrConnectionTester>(_ => new ArrConnectionTester(new HttpClient { Timeout = Timeout.InfiniteTimeSpan }));
+        services.AddSingleton(_ => new HttpClient { Timeout = Timeout.InfiniteTimeSpan });
+        services.AddSingleton<IArrConnectionTester, ArrConnectionTester>();
+        services.AddSingleton<IArrClientFactory, ArrClientFactory>();
 
         services.AddSingleton<ToastService>();
         services.AddSingleton<IToastService>(sp => sp.GetRequiredService<ToastService>());
