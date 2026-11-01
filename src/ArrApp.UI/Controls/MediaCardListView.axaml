@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ArrApp.UI.ViewModels"
+             xmlns:controls="using:ArrApp.UI.Controls"
+             x:Class="ArrApp.UI.Controls.MediaCardListView"
+             x:DataType="vm:MediaCardViewModel">
+    <Border Classes="card" Padding="10">
+        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+            <Border Grid.Column="0" Width="56" CornerRadius="6" ClipToBounds="True" VerticalAlignment="Top">
+                <controls:ArtImage AspectRatio="1.5" DecodeWidth="168"
+                                   Request="{Binding PosterRequest}" FallbackText="{Binding Initial}"
+                                   Classes.dim="{Binding !IsMonitored}"/>
+            </Border>
+
+            <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+                <TextBlock Classes="subtitle" Text="{Binding Title}" TextWrapping="Wrap" MaxLines="2"
+                           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Classes="caption" Text="{Binding Detail}" IsVisible="{Binding Detail.Length}"/>
+                <Border Classes="badge inline" HorizontalAlignment="Left" IsVisible="{Binding HasBadge}"
+                        Classes.success="{Binding BadgeIsSuccess}" Classes.warning="{Binding BadgeIsWarning}"
+                        Classes.danger="{Binding BadgeIsDanger}">
+                    <TextBlock Classes="badge" Text="{Binding BadgeText}"/>
+                </Border>
+                <ProgressBar Classes="mini" Minimum="0" Maximum="1" Value="{Binding Progress}"
+                             IsVisible="{Binding HasProgress}" Margin="0,2,0,0"
+                             Classes.success="{Binding BadgeIsSuccess}" Classes.warning="{Binding BadgeIsWarning}"
+                             Classes.danger="{Binding BadgeIsDanger}"/>
+            </StackPanel>
+
+            <Ellipse Grid.Column="2" Classes="monitor" Classes.on="{Binding IsMonitored}" Width="12" Height="12"
+                     VerticalAlignment="Top" Margin="0,4,2,0"/>
+        </Grid>
+    </Border>
+</UserControl>

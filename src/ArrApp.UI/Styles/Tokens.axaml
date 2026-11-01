@@ -13,6 +13,7 @@
             <SolidColorBrush x:Key="ScrimBrush" Color="#99000000"/>
             <SolidColorBrush x:Key="DangerBrush" Color="#F0616D"/>
             <SolidColorBrush x:Key="SuccessBrush" Color="#3DD68C"/>
+            <SolidColorBrush x:Key="WarningBrush" Color="#F5B841"/>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="AppBackgroundBrush" Color="#F6F7F9"/>
@@ -24,6 +25,7 @@
             <SolidColorBrush x:Key="ScrimBrush" Color="#66000000"/>
             <SolidColorBrush x:Key="DangerBrush" Color="#C8323F"/>
             <SolidColorBrush x:Key="SuccessBrush" Color="#16995C"/>
+            <SolidColorBrush x:Key="WarningBrush" Color="#B7791F"/>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

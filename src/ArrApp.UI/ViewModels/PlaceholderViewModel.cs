@@ -43,7 +43,7 @@ public sealed partial class PlaceholderViewModel(INavigationService navigation, 
 
     // TEMP dev aid until the library screen (F-301/F-302): fetch the active server's library through the real client
     // and show the first posters through the real image pipeline (server + API key, public fallback, disk cache).
-    public ObservableCollection<DevPoster> DevPosters { get; } = [];
+    public ObservableCollection<MediaCardViewModel> DevCards { get; } = [];
 
     [RelayCommand]
     private async Task LoadLibraryDevAsync() {
@@ -52,10 +52,9 @@ public sealed partial class PlaceholderViewModel(INavigationService navigation, 
 
         try {
             var library = await clients.Create(server).GetLibraryAsync();
-            DevPosters.Clear();
+            DevCards.Clear();
             foreach (var item in library.Take(3)) {
-                var image = item.Poster;
-                DevPosters.Add(new DevPoster(item.Title, image is null ? new ImageRequest(null, null, null, null) : ImageRequest.For(server, image)));
+                DevCards.Add(new MediaCardViewModel(item, server));
             }
 
             toasts.Show($"{library.Count} in library");
@@ -70,7 +69,3 @@ public sealed partial class PlaceholderViewModel(INavigationService navigation, 
     public bool CanGoBack => navigation.CanGoBack;
 }
 
-/// <summary>TEMP: one poster in the dev display on the placeholder page.</summary>
-public sealed record DevPoster(string Title, ImageRequest Request) {
-    public string Initial => Title.Length > 0 ? Title[..1] : "?";
-}

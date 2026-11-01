@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ArrApp.UI.ViewModels"
+             xmlns:controls="using:ArrApp.UI.Controls"
+             x:Class="ArrApp.UI.Controls.MediaCardGridView"
+             x:DataType="vm:MediaCardViewModel">
+    <StackPanel Spacing="6">
+        <!-- Poster with the monitored dot, the status badge and (for series) a progress line on top -->
+        <Border CornerRadius="10" ClipToBounds="True">
+            <Grid>
+                <controls:ArtImage AspectRatio="1.5" DecodeWidth="360"
+                                   Request="{Binding PosterRequest}" FallbackText="{Binding Initial}"
+                                   Classes.dim="{Binding !IsMonitored}"/>
+
+                <Border Classes="overlay" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6">
+                    <Ellipse Classes="monitor" Classes.on="{Binding IsMonitored}" Width="10" Height="10"/>
+                </Border>
+
+                <Border Classes="badge" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="6,0,0,10"
+                        IsVisible="{Binding HasBadge}"
+                        Classes.success="{Binding BadgeIsSuccess}" Classes.warning="{Binding BadgeIsWarning}"
+                        Classes.danger="{Binding BadgeIsDanger}">
+                    <TextBlock Classes="badge" Text="{Binding BadgeText}"/>
+                </Border>
+
+                <ProgressBar Classes="mini" VerticalAlignment="Bottom" Minimum="0" Maximum="1"
+                             Value="{Binding Progress}" IsVisible="{Binding HasProgress}"
+                             Classes.success="{Binding BadgeIsSuccess}" Classes.warning="{Binding BadgeIsWarning}"
+                             Classes.danger="{Binding BadgeIsDanger}"/>
+            </Grid>
+        </Border>
+
+        <StackPanel Spacing="1">
+            <TextBlock Classes="cardtitle" Text="{Binding Title}" TextWrapping="Wrap" MaxLines="2"
+                       TextTrimming="CharacterEllipsis"/>
+            <TextBlock Classes="caption" Text="{Binding YearText}" IsVisible="{Binding YearText.Length}"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

@@ -1,5 +1,6 @@
 <Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:ArrApp.UI.Controls">
 
     <!-- Text -->
     <Style Selector="TextBlock">
@@ -145,6 +146,67 @@
     <Style Selector="Button.primary.danger-solid">
         <Setter Property="Background" Value="{DynamicResource DangerBrush}"/>
         <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <!-- Media cards: unmonitored posters are dimmed, with a monitored dot, a status badge and a thin progress line -->
+    <Style Selector="controls|ArtImage.dim">
+        <Setter Property="Opacity" Value="0.5"/>
+    </Style>
+    <Style Selector="TextBlock.cardtitle">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+    </Style>
+    <Style Selector="Border.overlay">
+        <Setter Property="Background" Value="#99000000"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Padding" Value="5"/>
+    </Style>
+    <Style Selector="Ellipse.monitor">
+        <Setter Property="Fill" Value="Transparent"/>
+        <Setter Property="Stroke" Value="{DynamicResource TextSecondaryBrush}"/>
+        <Setter Property="StrokeThickness" Value="1.5"/>
+    </Style>
+    <Style Selector="Ellipse.monitor.on">
+        <Setter Property="Fill" Value="{DynamicResource AccentBrush}"/>
+        <Setter Property="Stroke" Value="{DynamicResource AccentBrush}"/>
+    </Style>
+    <Style Selector="Border.badge">
+        <Setter Property="Background" Value="#CC0E1116"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="6,2"/>
+    </Style>
+    <Style Selector="Border.badge.inline">
+        <Setter Property="Background" Value="{DynamicResource SurfaceRaisedBrush}"/>
+    </Style>
+    <Style Selector="TextBlock.badge">
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+    </Style>
+    <Style Selector="Border.badge.success > TextBlock.badge">
+        <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+    </Style>
+    <Style Selector="Border.badge.warning > TextBlock.badge">
+        <Setter Property="Foreground" Value="{DynamicResource WarningBrush}"/>
+    </Style>
+    <Style Selector="Border.badge.danger > TextBlock.badge">
+        <Setter Property="Foreground" Value="{DynamicResource DangerBrush}"/>
+    </Style>
+    <Style Selector="ProgressBar.mini">
+        <Setter Property="MinHeight" Value="0"/>
+        <Setter Property="Height" Value="3"/>
+        <Setter Property="CornerRadius" Value="0"/>
+        <Setter Property="Background" Value="#66000000"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+    </Style>
+    <Style Selector="ProgressBar.mini.success">
+        <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+    </Style>
+    <Style Selector="ProgressBar.mini.warning">
+        <Setter Property="Foreground" Value="{DynamicResource WarningBrush}"/>
+    </Style>
+    <Style Selector="ProgressBar.mini.danger">
+        <Setter Property="Foreground" Value="{DynamicResource DangerBrush}"/>
     </Style>
 
     <!-- Bottom tab bar -->

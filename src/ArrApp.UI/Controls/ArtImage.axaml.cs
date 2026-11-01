@@ -26,6 +26,9 @@ public partial class ArtImage : UserControl {
     public static readonly StyledProperty<string?> FallbackTextProperty =
         AvaloniaProperty.Register<ArtImage, string?>(nameof(FallbackText));
 
+    public static readonly StyledProperty<double> AspectRatioProperty =
+        AvaloniaProperty.Register<ArtImage, double>(nameof(AspectRatio));
+
     private CancellationTokenSource? _cts;
 
     public ArtImage() {
@@ -50,12 +53,30 @@ public partial class ArtImage : UserControl {
         set => SetValue(FallbackTextProperty, value);
     }
 
+    /// <summary>Height divided by width (a poster is 1.5). When set, the height follows whatever width the layout gives.</summary>
+    public double AspectRatio {
+        get => GetValue(AspectRatioProperty);
+        set => SetValue(AspectRatioProperty, value);
+    }
+
+    protected override Size MeasureOverride(Size availableSize) {
+        if (AspectRatio > 0 && !double.IsInfinity(availableSize.Width)) {
+            var size = new Size(availableSize.Width, availableSize.Width * AspectRatio);
+            base.MeasureOverride(size);
+            return size;
+        }
+
+        return base.MeasureOverride(availableSize);
+    }
+
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change) {
         base.OnPropertyChanged(change);
         if (change.Property == FallbackTextProperty)
             Fallback.Text = FallbackText;
         else if (change.Property == CornerRadiusProperty)
             Frame.CornerRadius = CornerRadius;
+        else if (change.Property == AspectRatioProperty)
+            InvalidateMeasure();
         else if (change.Property == RequestProperty || change.Property == DecodeWidthProperty)
             Load();
     }
