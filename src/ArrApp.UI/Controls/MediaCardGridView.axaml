@@ -30,7 +30,7 @@
             </Grid>
         </Border>
 
-        <StackPanel Spacing="1">
+        <StackPanel Spacing="1" MinHeight="58">
             <TextBlock Classes="cardtitle" Text="{Binding Title}" TextWrapping="Wrap" MaxLines="2"
                        TextTrimming="CharacterEllipsis"/>
             <TextBlock Classes="caption" Text="{Binding YearText}" IsVisible="{Binding YearText.Length}"/>

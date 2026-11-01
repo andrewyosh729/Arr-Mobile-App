@@ -102,10 +102,10 @@ public sealed class ImageLoader : IImageLoader {
 
             var bytes = await response.Content.ReadAsByteArrayAsync(cts.Token).ConfigureAwait(false);
             return bytes.Length > 0 && bytes.Length <= MaxImageBytes ? bytes : null;
-        } catch (HttpRequestException) {
+        } catch (Exception) {
+            // Timed out, connection dropped, or a platform-specific I/O exception (Android throws its own types):
+            // whatever went wrong, the contract is "no image", never an exception.
             return null;
-        } catch (OperationCanceledException) {
-            return null; // timed out
         }
     }
 }

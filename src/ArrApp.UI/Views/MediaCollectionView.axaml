@@ -1,0 +1,80 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ArrApp.UI.ViewModels"
+             xmlns:controls="using:ArrApp.UI.Controls"
+             x:Class="ArrApp.UI.Views.MediaCollectionView"
+             x:DataType="vm:MediaCollectionViewModel">
+    <DockPanel>
+        <!-- Header: what this is, the refresh button (for mouse users; touch users pull down) and the layout toggle -->
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto,Auto" Margin="16,8,12,4">
+            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <TextBlock Classes="headline" Text="{Binding Title}"/>
+                <TextBlock Classes="caption" Text="{Binding TotalCount}" VerticalAlignment="Bottom" Margin="0,0,0,6"/>
+            </StackPanel>
+            <Button Grid.Column="1" Classes="chip" Content="⟳" Margin="0,0,8,0"
+                    Command="{Binding RefreshCommand}" ToolTip.Tip="Refresh"/>
+            <Button Grid.Column="2" Classes="chip" Content="{Binding LayoutToggleText}" Command="{Binding ToggleLayoutCommand}"/>
+        </Grid>
+
+        <Panel>
+            <!-- First load -->
+            <StackPanel IsVisible="{Binding IsLoading}" VerticalAlignment="Center" Spacing="12" Margin="32">
+                <ProgressBar IsIndeterminate="True" MaxWidth="200"/>
+                <TextBlock Classes="caption" Text="Loading your library…" HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- The load failed -->
+            <StackPanel IsVisible="{Binding HasError}" VerticalAlignment="Center" Spacing="12" Margin="32">
+                <TextBlock Classes="title" Text="Couldn't load your library" HorizontalAlignment="Center" TextAlignment="Center"/>
+                <TextBlock Text="{Binding ErrorMessage}" TextWrapping="Wrap" TextAlignment="Center"
+                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                <Button Classes="primary" Content="Try again" HorizontalAlignment="Center" Command="{Binding RetryCommand}"/>
+            </StackPanel>
+
+            <!-- Connected, but nothing in the library -->
+            <StackPanel IsVisible="{Binding IsEmpty}" VerticalAlignment="Center" Spacing="8" Margin="32">
+                <TextBlock Classes="title" Text="Nothing here yet" HorizontalAlignment="Center"/>
+                <TextBlock Classes="caption" Text="Anything you add on this server will show up here."
+                           HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
+            </StackPanel>
+
+            <!-- The library: pull down to refresh; only the rows on screen exist as controls -->
+            <RefreshContainer x:Name="Refresher" IsVisible="{Binding ShowContent}" RefreshRequested="OnRefreshRequested">
+                <ScrollViewer>
+                    <ItemsControl ItemsSource="{Binding Rows}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.DataTemplates>
+                            <DataTemplate DataType="vm:GridRowViewModel" x:DataType="vm:GridRowViewModel">
+                                <ItemsControl ItemsSource="{Binding Cells}" Margin="16,0,16,14">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Rows="1" ColumnSpacing="10"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:MediaCellViewModel">
+                                            <Border IsVisible="{Binding HasCard}">
+                                                <controls:MediaCard Layout="Grid" DataContext="{Binding Card}"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </DataTemplate>
+                            <DataTemplate DataType="vm:ListRowViewModel" x:DataType="vm:ListRowViewModel">
+                                <controls:MediaCard Layout="List" DataContext="{Binding Card}" Margin="16,0,16,8"/>
+                            </DataTemplate>
+                        </ItemsControl.DataTemplates>
+                    </ItemsControl>
+                </ScrollViewer>
+            </RefreshContainer>
+
+            <!-- The library has items, but the search/filter keeps none -->
+            <TextBlock Classes="caption" Text="Nothing matches" IsVisible="{Binding NoMatches}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Panel>
+    </DockPanel>
+</UserControl>

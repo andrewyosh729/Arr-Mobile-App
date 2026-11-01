@@ -123,3 +123,34 @@ public class ArrHttpClientTests {
         Assert.DoesNotContain("KEY123", ex.Message);
     }
 }
+
+public class ArrHttpClientPlatformFailureTests {
+    // Android's HTTP stack throws its own exception types (e.g. Java.IO.IOException: "unexpected end of stream"), which
+    // are not HttpRequestException. The user must still get a friendly "couldn't reach" message.
+    private sealed class PlatformIoException(string message) : IOException(message);
+
+    [Theory]
+    [InlineData(typeof(IOException))]
+    [InlineData(typeof(PlatformIoException))]
+    [InlineData(typeof(InvalidOperationException))]
+    public async Task Any_Failure_During_The_Exchange_Is_Reported_As_Unreachable_Not_As_A_Crash(Type exceptionType) {
+        var thrown = (Exception)Activator.CreateInstance(exceptionType, "unexpected end of stream on Address@d4b76e7")!;
+        var client = new ArrHttpClient(new HttpClient(FakeHandler.Throw(thrown)), "http://nas:8989", "KEY");
+
+        var ex = await Assert.ThrowsAsync<ArrApiException>(() => client.GetAsync("system/status", ArrApp.Core.Api.ArrJsonContext.Default.SystemStatus));
+
+        Assert.Equal(ArrErrorKind.Unreachable, ex.Kind);
+        Assert.DoesNotContain("Address@", ex.Message); // the technical text stays in the inner exception
+        Assert.Same(thrown, ex.InnerException);
+    }
+
+    [Fact]
+    public async Task Cancelling_Is_Still_Cancelling_And_Not_Unreachable() {
+        using var cts = new CancellationTokenSource();
+        await cts.CancelAsync();
+        var client = new ArrHttpClient(new HttpClient(new FakeHandler((_, ct) => Task.FromCanceled<HttpResponseMessage>(ct))), "http://nas", "KEY");
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => client.GetAsync("system/status", ArrApp.Core.Api.ArrJsonContext.Default.SystemStatus, cts.Token));
+    }
+}

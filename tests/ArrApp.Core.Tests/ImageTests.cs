@@ -355,3 +355,24 @@ public class ImageLoaderTests : IDisposable {
         public void Advance(TimeSpan by) => _now += by;
     }
 }
+
+public class ImageLoaderPlatformFailureTests : IDisposable {
+    private readonly string _dir = Path.Combine(Path.GetTempPath(), "arrapp-img-" + Guid.NewGuid().ToString("N"));
+
+    public void Dispose() {
+        if (Directory.Exists(_dir))
+            Directory.Delete(_dir, true);
+    }
+
+    [Theory]
+    [InlineData(typeof(IOException))]
+    [InlineData(typeof(InvalidOperationException))]
+    public async Task A_Platform_Specific_Failure_Gives_No_Image_Instead_Of_An_Exception(Type exceptionType) {
+        var thrown = (Exception)Activator.CreateInstance(exceptionType, "unexpected end of stream")!;
+        var loader = new ImageLoader(new HttpClient(FakeHandler.Throw(thrown)), new HttpClient(FakeHandler.Throw(thrown)), new DiskImageCache(_dir));
+
+        var bytes = await loader.LoadAsync(new ImageRequest("http://nas", "K", "/MediaCover/1/p.jpg", "https://x.example/p.jpg"));
+
+        Assert.Null(bytes);
+    }
+}

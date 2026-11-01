@@ -54,6 +54,10 @@ public sealed class ArrHttpClient(HttpClient http, string baseUrl, string apiKey
             throw ArrApiException.For(ArrErrorKind.Timeout);
         } catch (HttpRequestException ex) {
             throw ArrApiException.For(ex.HttpRequestError == HttpRequestError.SecureConnectionError ? ArrErrorKind.Tls : ArrErrorKind.Unreachable, ex);
+        } catch (Exception ex) when (ex is not (OperationCanceledException or ArrApiException)) {
+            // Whatever else goes wrong mid-exchange (a dropped connection, "unexpected end of stream", and the platform's own
+            // exception types such as Android's Java.IO.IOException) is a connection problem to the user, not a crash.
+            throw ArrApiException.For(ArrErrorKind.Unreachable, ex);
         }
     }
 }

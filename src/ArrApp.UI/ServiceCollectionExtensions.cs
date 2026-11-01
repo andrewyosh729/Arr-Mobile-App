@@ -61,9 +61,10 @@ public static class ServiceCollectionExtensions {
         services.AddTransient<WelcomeViewModel>();
         services.AddSingleton<ArrContext>();
         services.AddSingleton<ServerSwitcherViewModel>();
+        services.AddSingleton<MediaCollectionViewModel>();
         services.AddTransient<ServerPickerViewModel>();
         services.AddSingleton(sp => new TabHostViewModel([
-            new TabItem("Library", Placeholder(sp, "Library")),
+            new TabItem("Library", sp.GetRequiredService<MediaCollectionViewModel>()),
             new TabItem("Discover", Placeholder(sp, "Discover")),
             new TabItem("Activity", Placeholder(sp, "Activity")),
             new TabItem("Settings", sp.GetRequiredService<SettingsViewModel>()),

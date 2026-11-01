@@ -21,6 +21,7 @@ public class ViewLocator : IDataTemplate {
         [typeof(SettingsViewModel)] = () => new SettingsView(),
         [typeof(ConfirmViewModel)] = () => new ConfirmView(),
         [typeof(WelcomeViewModel)] = () => new WelcomeView(),
+        [typeof(MediaCollectionViewModel)] = () => new MediaCollectionView(),
         [typeof(ServerPickerViewModel)] = () => new ServerPickerView(),
     };
 

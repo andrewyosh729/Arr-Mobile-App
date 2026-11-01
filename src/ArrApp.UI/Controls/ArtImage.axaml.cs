@@ -113,6 +113,9 @@ public partial class ArtImage : UserControl {
                 await Dispatcher.UIThread.InvokeAsync(() => Show(bitmap, animate: true));
         } catch (OperationCanceledException) {
             // scrolled away or the request changed
+        } catch (Exception) {
+            // A missing poster is never worth an error: this is an async void, so anything thrown here would reach the
+            // global handler as an error toast. The placeholder simply stays.
         }
     }
 

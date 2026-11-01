@@ -1,10 +1,5 @@
 using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 using ArrApp.Core;
-using ArrApp.Core.Api;
-using ArrApp.Core.Images;
 using ArrApp.UI.Errors;
 using ArrApp.UI.Navigation;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -13,7 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 namespace ArrApp.UI.ViewModels;
 
 /// <summary>Stand-in page that exercises push/pop/sheet until real screens exist.</summary>
-public sealed partial class PlaceholderViewModel(INavigationService navigation, IBottomSheetService sheets, IToastService toasts, ArrContext context, IArrClientFactory clients) : ViewModelBase {
+public sealed partial class PlaceholderViewModel(INavigationService navigation, IBottomSheetService sheets, IToastService toasts, ArrContext context) : ViewModelBase {
     /// <summary>Shown on the page so it is visible which server the app has landed on.</summary>
     public ArrContext Context => context;
 
@@ -40,28 +35,6 @@ public sealed partial class PlaceholderViewModel(INavigationService navigation, 
             ok ? ToastKind.Success : ToastKind.Error);
     }
 
-
-    // TEMP dev aid until the library screen (F-301/F-302): fetch the active server's library through the real client
-    // and show the first posters through the real image pipeline (server + API key, public fallback, disk cache).
-    public ObservableCollection<MediaCardViewModel> DevCards { get; } = [];
-
-    [RelayCommand]
-    private async Task LoadLibraryDevAsync() {
-        if (context.Active is not { } server)
-            return;
-
-        try {
-            var library = await clients.Create(server).GetLibraryAsync();
-            DevCards.Clear();
-            foreach (var item in library.Take(3)) {
-                DevCards.Add(new MediaCardViewModel(item, server));
-            }
-
-            toasts.Show($"{library.Count} in library");
-        } catch (Exception ex) {
-            toasts.Show(ex.Message, ToastKind.Error);
-        }
-    }
 
     [RelayCommand]
     private void Back() => navigation.Pop();
