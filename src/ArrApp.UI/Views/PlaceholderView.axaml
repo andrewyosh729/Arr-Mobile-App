@@ -1,12 +1,30 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:ArrApp.UI.ViewModels"
+             xmlns:controls="using:ArrApp.UI.Controls"
              x:Class="ArrApp.UI.Views.PlaceholderView"
              x:DataType="vm:PlaceholderViewModel">
     <StackPanel Spacing="12" HorizontalAlignment="Center" VerticalAlignment="Center">
         <TextBlock Classes="title" Text="{Binding Title}" HorizontalAlignment="Center"/>
         <TextBlock Classes="caption" Text="{Binding Context.ActiveLabel}" HorizontalAlignment="Center"/>
         <TextBlock Classes="caption" Text="{Binding Context.MediaNoun, StringFormat=Browsing your {0}}" HorizontalAlignment="Center"/>
+        <Button Content="Load library (dev)" Command="{Binding LoadLibraryDevCommand}" HorizontalAlignment="Center"/>
+        <ItemsControl ItemsSource="{Binding DevPosters}" HorizontalAlignment="Center">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="8"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:DevPoster">
+                    <StackPanel Spacing="4" Width="96">
+                        <controls:ArtImage Width="96" Height="144" CornerRadius="8" DecodeWidth="288"
+                                           Request="{Binding Request}" FallbackText="{Binding Initial}"/>
+                        <TextBlock Classes="caption" Text="{Binding Title}" TextTrimming="CharacterEllipsis" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
         <Button Classes="primary" Content="Open detail" Command="{Binding OpenDetailCommand}" HorizontalAlignment="Center"/>
         <Button Content="Show sheet" Command="{Binding ShowSheetCommand}" HorizontalAlignment="Center"/>
         <Button Content="Test key vault" Command="{Binding TestKeyVaultCommand}" HorizontalAlignment="Center"/>

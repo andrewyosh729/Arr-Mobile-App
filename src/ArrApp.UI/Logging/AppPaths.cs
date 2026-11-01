@@ -9,4 +9,7 @@ public static class AppPaths {
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ArrApp");
 
     public static string LogDirectory { get; } = Path.Combine(DataDirectory, "logs");
+
+    /// <summary>Downloaded artwork. Safe to delete at any time; it is simply fetched again.</summary>
+    public static string ImageCacheDirectory { get; } = Path.Combine(DataDirectory, "cache", "images");
 }

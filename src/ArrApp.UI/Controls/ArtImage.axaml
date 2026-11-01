@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ArrApp.UI.Controls.ArtImage">
+    <Border x:Name="Frame" Background="{DynamicResource SurfaceRaisedBrush}" ClipToBounds="True">
+        <Grid>
+            <!-- Placeholder: shown until (or instead of) the picture -->
+            <TextBlock x:Name="Fallback" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       FontSize="28" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.6"/>
+            <Image x:Name="Picture" Opacity="0" Stretch="UniformToFill"
+                   RenderOptions.BitmapInterpolationMode="MediumQuality">
+                <Image.Transitions>
+                    <Transitions>
+                        <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
+                    </Transitions>
+                </Image.Transitions>
+            </Image>
+        </Grid>
+    </Border>
+</UserControl>

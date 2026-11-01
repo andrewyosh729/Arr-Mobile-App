@@ -5,6 +5,8 @@ using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using ArrApp.Core;
 using ArrApp.Core.Api;
+using ArrApp.Core.Images;
+using ArrApp.UI.Images;
 using ArrApp.Data;
 using Microsoft.Extensions.Logging;
 using ArrApp.UI.Errors;
@@ -29,8 +31,16 @@ public static class ServiceCollectionExtensions {
         services.AddSingleton<IServerConnectionRepository, ServerConnectionRepository>();
         services.AddSingleton<ISettingsStore, SettingsStore>();
 
-        // One shared HttpClient; ArrHttpClient enforces its own per-request timeout.
-        services.AddSingleton(_ => new HttpClient { Timeout = Timeout.InfiniteTimeSpan });
+        // Shared HttpClient for the Arr servers; ArrHttpClient enforces its own per-request timeout.
+        // Redirects are NOT followed for the user's own server: HttpClient resends custom headers (X-Api-Key) to the
+        // redirect target, so an SSO redirect to another domain would receive the key.
+        services.AddSingleton(_ => new HttpClient(new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = Timeout.InfiniteTimeSpan });
+
+        // Artwork: disk cache, then the server (with the key), then the public URL (via a separate client, no key).
+        services.AddSingleton<IImageCache>(_ => new DiskImageCache(AppPaths.ImageCacheDirectory));
+        services.AddSingleton<IImageLoader>(sp => new ImageLoader(
+            sp.GetRequiredService<HttpClient>(), new HttpClient { Timeout = Timeout.InfiniteTimeSpan }, sp.GetRequiredService<IImageCache>()));
+        services.AddSingleton<BitmapService>();
         services.AddSingleton<IArrConnectionTester, ArrConnectionTester>();
         services.AddSingleton<IArrClientFactory, ArrClientFactory>();
 

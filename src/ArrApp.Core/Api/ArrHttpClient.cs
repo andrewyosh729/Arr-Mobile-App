@@ -32,6 +32,11 @@ public sealed class ArrHttpClient(HttpClient http, string baseUrl, string apiKey
                     throw ArrApiException.For(ArrErrorKind.Unauthorized);
                 case HttpStatusCode.NotFound:
                     throw ArrApiException.For(ArrErrorKind.NotFound);
+                case >= HttpStatusCode.MultipleChoices and < HttpStatusCode.BadRequest:
+                    // Redirects are deliberately not followed: they would carry the API key to wherever they point
+                    // (for example an SSO login on another domain). The usual cause is an http -> https redirect.
+                    throw new ArrApiException(ArrErrorKind.InvalidResponse,
+                        "The server redirected the request (often from http:// to https://). Use the address it redirects to.");
                 case >= HttpStatusCode.InternalServerError:
                     throw ArrApiException.For(ArrErrorKind.ServerError, statusCode: (int)response.StatusCode);
                 case not HttpStatusCode.OK:

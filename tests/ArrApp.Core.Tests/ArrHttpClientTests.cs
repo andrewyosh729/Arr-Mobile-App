@@ -39,6 +39,23 @@ public class ArrHttpClientTests {
     }
 
     [Fact]
+    public async Task A_Redirect_Is_Explained_Not_Followed_And_Never_Resends_The_Key() {
+        var handler = new FakeHandler((_, _) => {
+            var response = new HttpResponseMessage(HttpStatusCode.MovedPermanently);
+            response.Headers.Location = new Uri("https://login.example/sso");
+            return Task.FromResult(response);
+        });
+
+        var ex = await Assert.ThrowsAsync<ArrApiException>(() => Get(Client(handler)));
+
+        Assert.Equal(ArrErrorKind.InvalidResponse, ex.Kind);
+        Assert.Contains("redirected", ex.Message);
+        Assert.Contains("https", ex.Message);
+        Assert.Single(handler.Requests); // the redirect target was never requested
+        Assert.DoesNotContain("KEY123", ex.Message);
+    }
+
+    [Fact]
     public async Task Html_Instead_Of_Json_Is_InvalidResponse() {
         var handler = FakeHandler.Json("<html><body>Login</body></html>");
 
