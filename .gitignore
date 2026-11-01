@@ -3,3 +3,5 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+# Dev tool output
+tools/fake-arr/*.log

@@ -16,6 +16,36 @@
             <Button Grid.Column="2" Classes="chip" Content="{Binding LayoutToggleText}" Command="{Binding ToggleLayoutCommand}"/>
         </Grid>
 
+        <!-- Search, sort and filters: only once there is a library to work on -->
+        <StackPanel DockPanel.Dock="Top" Spacing="8" Margin="16,4,16,8" IsVisible="{Binding HasItems}">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                <TextBox Text="{Binding SearchText}" PlaceholderText="{Binding SearchPlaceholder}">
+                    <TextBox.InnerRightContent>
+                        <Button Classes="chip" Content="✕" MinWidth="36" Padding="8,0" Margin="0,0,4,0"
+                                IsVisible="{Binding HasSearchText}" Command="{Binding ClearFiltersCommand}"/>
+                    </TextBox.InnerRightContent>
+                </TextBox>
+                <Button Grid.Column="1" Classes="chip" Content="{Binding SortChipText}" Command="{Binding ShowSortCommand}"/>
+            </Grid>
+
+            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
+                <ItemsControl ItemsSource="{Binding FilterChips}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="8"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:FilterChipViewModel">
+                            <Button Classes="chip" Classes.selected="{Binding IsSelected}" Content="{Binding Text}"
+                                    Command="{Binding $parent[UserControl].((vm:MediaCollectionViewModel)DataContext).SetFilterCommand}"
+                                    CommandParameter="{Binding}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </StackPanel>
+
         <Panel>
             <!-- First load -->
             <StackPanel IsVisible="{Binding IsLoading}" VerticalAlignment="Center" Spacing="12" Margin="32">
@@ -73,8 +103,11 @@
             </RefreshContainer>
 
             <!-- The library has items, but the search/filter keeps none -->
-            <TextBlock Classes="caption" Text="Nothing matches" IsVisible="{Binding NoMatches}"
-                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <StackPanel IsVisible="{Binding NoMatches}" VerticalAlignment="Center" Spacing="12" Margin="32">
+                <TextBlock Classes="title" Text="Nothing matches" HorizontalAlignment="Center"/>
+                <TextBlock Classes="caption" Text="Try a different search or filter." HorizontalAlignment="Center"/>
+                <Button Content="Clear filters" HorizontalAlignment="Center" Command="{Binding ClearFiltersCommand}"/>
+            </StackPanel>
         </Panel>
     </DockPanel>
 </UserControl>

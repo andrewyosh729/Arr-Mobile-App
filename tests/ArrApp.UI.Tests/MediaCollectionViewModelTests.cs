@@ -38,6 +38,7 @@ public class MediaCollectionViewModelTests {
     private sealed class Fixture {
         public MemorySettings Settings { get; } = new();
         public ToastService Toasts { get; } = new();
+        public ArrApp.UI.Navigation.BottomSheetService Sheets { get; } = TestSheets.Create();
         public ArrContext Context { get; }
         public FakeClients Clients { get; }
         public MediaCollectionViewModel Vm { get; }
@@ -45,7 +46,7 @@ public class MediaCollectionViewModelTests {
         public Fixture(Func<ServerConnection, IArrClient> create) {
             Context = new ArrContext(new MemoryRepository(), Settings);
             Clients = new FakeClients(create);
-            Vm = new MediaCollectionViewModel(Context, Clients, Settings, Toasts);
+            Vm = new MediaCollectionViewModel(Context, Clients, Settings, Toasts, Sheets, TimeSpan.Zero);
         }
 
         public static Fixture With(params string[] titles) => new(_ => new FakeClient(_ => Task.FromResult(Library(titles))));
@@ -228,7 +229,7 @@ public class MediaCollectionViewModelTests {
         var settings = new MemorySettings();
         settings.Values[MediaCollectionViewModel.GridLayoutSettingKey] = "0";
         var context = new ArrContext(new MemoryRepository(), settings);
-        var vm = new MediaCollectionViewModel(context, new FakeClients(_ => new FakeClient(_ => Task.FromResult(Library("A")))), settings, new ToastService());
+        var vm = new MediaCollectionViewModel(context, new FakeClients(_ => new FakeClient(_ => Task.FromResult(Library("A")))), settings, new ToastService(), TestSheets.Create(), TimeSpan.Zero);
 
         context.SetActive(Server(1, "home"));
         await vm.WhenIdleAsync();
@@ -286,7 +287,7 @@ public class MediaCollectionRowsTests {
         if (list)
             settings.Values[MediaCollectionViewModel.GridLayoutSettingKey] = "0";
         var context = new ArrContext(new MemoryRepository(), settings);
-        var vm = new MediaCollectionViewModel(context, new OneShotClients(new OneShotClient(items)), settings, new ToastService());
+        var vm = new MediaCollectionViewModel(context, new OneShotClients(new OneShotClient(items)), settings, new ToastService(), TestSheets.Create(), TimeSpan.Zero);
         context.SetActive(new ServerConnection { Id = 1, Name = "home", BaseUrl = "http://home", ApiKey = "K" });
         await vm.WhenIdleAsync();
         return vm;

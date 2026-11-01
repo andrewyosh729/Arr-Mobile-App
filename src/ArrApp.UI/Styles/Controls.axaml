@@ -60,6 +60,15 @@
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Background" Value="Transparent"/>
     </Style>
+    <!-- A chip that is "on" (the chosen filter): filled with the accent colour -->
+    <Style Selector="Button.chip.selected">
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+    </Style>
+    <Style Selector="Button.chip.selected /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource OnAccentBrush}"/>
+    </Style>
+
     <!-- Disabled chips (e.g. move up on the first row) stay outlined and just fade -->
     <Style Selector="Button.chip:disabled /template/ ContentPresenter#PART_ContentPresenter">
         <Setter Property="Background" Value="Transparent"/>

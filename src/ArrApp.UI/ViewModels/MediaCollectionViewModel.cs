@@ -8,35 +8,63 @@ using ArrApp.Core;
 using ArrApp.Core.Api;
 using ArrApp.Core.Presentation;
 using ArrApp.UI.Errors;
+using ArrApp.UI.Navigation;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace ArrApp.UI.ViewModels;
 
+/// <summary>One filter button ("Missing 12"). The count is for the whole library, so it doesn't jump around while typing a search.</summary>
+public sealed partial class FilterChipViewModel(MediaFilter filter) : ObservableObject {
+    public MediaFilter Filter { get; } = filter;
+    public string Label => MediaSortText.Filter(Filter);
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Text))]
+    private int _count;
+
+    [ObservableProperty]
+    private bool _isSelected;
+
+    public string Text => $"{Label} {Count}";
+}
+
 /// <summary>
-/// The library of the active server (series for Sonarr, movies for Radarr) as a grid or list of cards.
-/// It loads when a server becomes active, reloads when the active server changes (a result that arrives for a
-/// server the user has already left is dropped), and remembers the grid/list choice.
+/// The library of the active server (series for Sonarr, movies for Radarr) as a grid or list of cards, with search,
+/// sort and filter. It loads when a server becomes active, reloads when the active server changes (a result that
+/// arrives for a server the user has already left is dropped), and remembers the grid/list choice.
 /// </summary>
 public sealed partial class MediaCollectionViewModel : ViewModelBase {
     public const string GridLayoutSettingKey = "LibraryLayoutIsGrid";
+    public static readonly TimeSpan DefaultSearchDelay = TimeSpan.FromMilliseconds(250);
 
     private readonly ArrContext _context;
     private readonly IArrClientFactory _clients;
     private readonly ISettingsStore _settings;
     private readonly IToastService _toasts;
+    private readonly IBottomSheetService _sheets;
+    private readonly TimeSpan _searchDelay;
 
     private CancellationTokenSource? _loadCts;
     private Task _loadTask = Task.CompletedTask;
+    private CancellationTokenSource? _searchCts;
+    private Task _searchTask = Task.CompletedTask;
+    private bool _syncingSearchText;
     private bool _layoutLoaded;
     private IReadOnlyList<MediaCardViewModel> _all = [];
     private MediaQuery _query = new();
 
-    public MediaCollectionViewModel(ArrContext context, IArrClientFactory clients, ISettingsStore settings, IToastService toasts) {
+    public MediaCollectionViewModel(ArrContext context, IArrClientFactory clients, ISettingsStore settings, IToastService toasts,
+        IBottomSheetService sheets, TimeSpan? searchDelay = null) {
         _context = context;
         _clients = clients;
         _settings = settings;
         _toasts = toasts;
+        _sheets = sheets;
+        _searchDelay = searchDelay ?? DefaultSearchDelay;
+
+        FilterChips = Enum.GetValues<MediaFilter>().Select(f => new FilterChipViewModel(f)).ToList();
+        UpdateQueryState();
 
         context.PropertyChanged += (_, e) => {
             if (e.PropertyName == nameof(ArrContext.Active))
@@ -75,17 +103,41 @@ public sealed partial class MediaCollectionViewModel : ViewModelBase {
     [ObservableProperty]
     private bool _noMatches;
 
+    /// <summary>What is typed in the search box. It is applied to the list a moment after typing stops.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasSearchText))]
+    private string _searchText = "";
+
+    /// <summary>What the screen renders: <see cref="Items"/> grouped into rows. A new list each time: one change notification.</summary>
+    [ObservableProperty]
+    private IReadOnlyList<MediaRowViewModel> _rows = [];
+
     public bool IsList => !IsGrid;
+    public bool HasSearchText => SearchText.Length > 0;
+    public bool HasError => ErrorMessage is not null;
+    public bool ShowContent => !IsLoading && !HasError && !IsEmpty;
+
+    /// <summary>"Series" or "Movies", following the active server.</summary>
+    public string Title => _context.MediaNoun is { Length: > 0 } noun ? noun : "Library";
+
+    /// <summary>How many items the library has, before any search or filter.</summary>
+    public int TotalCount => _all.Count;
+
+    /// <summary>True once there is a library to search, sort and filter.</summary>
+    public bool HasItems => _all.Count > 0;
+
+    public string SearchPlaceholder => $"Search {TotalCount} {Title.ToLowerInvariant()}";
 
     /// <summary>Label for the layout button: names the layout it switches to.</summary>
     public string LayoutToggleText => IsGrid ? "☰  List" : "▦  Grid";
 
-    /// <summary>
-    /// What the screen renders: <see cref="Items"/> grouped into rows (one card per row in the list layout, <see cref="Columns"/>
-    /// per row in the grid). A new list each time, so the UI gets one change notification instead of one per row.
-    /// </summary>
-    [ObservableProperty]
-    private IReadOnlyList<MediaRowViewModel> _rows = [];
+    /// <summary>"Title · A to Z": what the list is sorted by right now.</summary>
+    public string SortChipText => $"{MediaSortText.Name(_query.SortKey)} · {MediaSortText.Direction(_query.SortKey, _query.Descending)}";
+
+    public IReadOnlyList<FilterChipViewModel> FilterChips { get; }
+
+    /// <summary>True when a search or filter is hiding part of the library.</summary>
+    public bool IsNarrowed => _query.Search.Length > 0 || _query.Filter != MediaFilter.All;
 
     /// <summary>How many cards fit across in the grid. The view reports this from its width.</summary>
     public int Columns { get; private set; } = 3;
@@ -99,31 +151,46 @@ public sealed partial class MediaCollectionViewModel : ViewModelBase {
         OnPropertyChanged(nameof(Columns));
         RebuildRows();
     }
-    public bool HasError => ErrorMessage is not null;
-    public bool ShowContent => !IsLoading && !HasError && !IsEmpty;
 
-    /// <summary>"Series" or "Movies", following the active server.</summary>
-    public string Title => _context.MediaNoun is { Length: > 0 } noun ? noun : "Library";
-
-    /// <summary>How many items the library has, before any search or filter.</summary>
-    public int TotalCount => _all.Count;
-
+    /// <summary>The applied search, sort and filter. Setting it applies it at once (the search box lags behind by a moment).</summary>
     public MediaQuery Query {
         get => _query;
-        set {
-            _query = value;
-            ApplyQuery();
-        }
+        set => ApplyQueryChange(value, syncSearchText: true);
     }
 
     /// <summary>Completes when the load in progress (if any) has finished. For tests and callers that need to wait.</summary>
     public Task WhenIdleAsync() => _loadTask;
+
+    /// <summary>Completes when the typed search has been applied to the list.</summary>
+    public Task WhenSearchAppliedAsync() => _searchTask;
 
     partial void OnIsGridChanged(bool value) {
         OnPropertyChanged(nameof(LayoutToggleText));
         RebuildRows();
         if (_layoutLoaded)
             _ = SaveLayoutAsync(value);
+    }
+
+    partial void OnSearchTextChanged(string value) {
+        if (_syncingSearchText)
+            return;
+
+        // Debounce: wait until typing pauses, so each keystroke doesn't re-sort thousands of items.
+        _searchCts?.Cancel();
+        var cts = _searchCts = new CancellationTokenSource();
+        _searchTask = ApplySearchAsync(value, cts.Token);
+    }
+
+    private async Task ApplySearchAsync(string text, CancellationToken cancellationToken) {
+        try {
+            if (_searchDelay > TimeSpan.Zero)
+                await Task.Delay(_searchDelay, cancellationToken);
+        } catch (OperationCanceledException) {
+            return; // typed again: a newer search is on its way
+        }
+
+        if (!cancellationToken.IsCancellationRequested)
+            ApplyQueryChange(_query with { Search = text.Trim() }, syncSearchText: false);
     }
 
     [RelayCommand]
@@ -134,6 +201,24 @@ public sealed partial class MediaCollectionViewModel : ViewModelBase {
 
     [RelayCommand]
     private Task RetryAsync() => _loadTask = LoadAsync(isRefresh: false);
+
+    [RelayCommand]
+    private void SetFilter(FilterChipViewModel chip) => Query = _query with { Filter = chip.Filter };
+
+    [RelayCommand]
+    private void ShowSort()
+        => _sheets.Show<SortPickerViewModel>(picker => picker.Load(_query.SortKey, _query.Descending, OnSortPicked));
+
+    private void OnSortPicked(MediaSortKey key) {
+        _sheets.Hide();
+
+        // Picking the current sort again reverses it; picking another starts in that sort's natural direction.
+        Query = key == _query.SortKey ? _query with { Descending = !_query.Descending } : _query.SortedBy(key);
+    }
+
+    /// <summary>Drops the search and filter (keeps the chosen sort).</summary>
+    [RelayCommand]
+    private void ClearFilters() => Query = _query with { Search = "", Filter = MediaFilter.All };
 
     private async Task LoadAsync(bool isRefresh) {
         _loadCts?.Cancel();
@@ -165,6 +250,7 @@ public sealed partial class MediaCollectionViewModel : ViewModelBase {
             _all = library.Select(item => new MediaCardViewModel(item, server)).ToList();
             ErrorMessage = null;
             IsLoading = false;
+            UpdateFilterCounts();
             ApplyQuery();
         } catch (OperationCanceledException) {
             // superseded by a newer load
@@ -184,13 +270,38 @@ public sealed partial class MediaCollectionViewModel : ViewModelBase {
         }
     }
 
+    // A different server is a different library: start from a clean search, filter and sort.
     private void Reset() {
         _all = [];
         ErrorMessage = null;
         Items.Clear();
+        _searchCts?.Cancel();
+        _query = new MediaQuery();
+        SetSearchTextQuietly("");
+        UpdateFilterCounts();
+        UpdateQueryState();
         RebuildRows();
         OnPropertyChanged(nameof(TotalCount));
+        OnPropertyChanged(nameof(HasItems));
+        OnPropertyChanged(nameof(SearchPlaceholder));
         UpdateEmptyStates();
+    }
+
+    private void ApplyQueryChange(MediaQuery query, bool syncSearchText) {
+        _query = query;
+        if (syncSearchText)
+            SetSearchTextQuietly(query.Search);
+        ApplyQuery();
+        UpdateQueryState();
+    }
+
+    private void SetSearchTextQuietly(string text) {
+        _syncingSearchText = true;
+        try {
+            SearchText = text;
+        } finally {
+            _syncingSearchText = false;
+        }
     }
 
     private void ApplyQuery() {
@@ -203,7 +314,23 @@ public sealed partial class MediaCollectionViewModel : ViewModelBase {
 
         RebuildRows();
         OnPropertyChanged(nameof(TotalCount));
+        OnPropertyChanged(nameof(HasItems));
+        OnPropertyChanged(nameof(SearchPlaceholder));
         UpdateEmptyStates();
+    }
+
+    private void UpdateQueryState() {
+        foreach (var chip in FilterChips)
+            chip.IsSelected = chip.Filter == _query.Filter;
+
+        OnPropertyChanged(nameof(SortChipText));
+        OnPropertyChanged(nameof(IsNarrowed));
+    }
+
+    private void UpdateFilterCounts() {
+        var items = _all.Select(card => card.Item).ToList();
+        foreach (var chip in FilterChips)
+            chip.Count = MediaQueryEngine.Count(items, chip.Filter);
     }
 
     private void UpdateEmptyStates() {

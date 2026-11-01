@@ -233,3 +233,25 @@ public class MediaQueryTests {
         }
     }
 }
+
+public class MediaSortTextTests {
+    [Theory]
+    [InlineData(MediaSortKey.Title, false, "A to Z")]
+    [InlineData(MediaSortKey.Title, true, "Z to A")]
+    [InlineData(MediaSortKey.DateAdded, true, "Newest first")]
+    [InlineData(MediaSortKey.DateAdded, false, "Oldest first")]
+    [InlineData(MediaSortKey.Year, true, "Latest first")]
+    [InlineData(MediaSortKey.Year, false, "Earliest first")]
+    [InlineData(MediaSortKey.Size, true, "Largest first")]
+    [InlineData(MediaSortKey.Size, false, "Smallest first")]
+    public void Directions_Are_Described_In_Words(MediaSortKey key, bool descending, string expected)
+        => Assert.Equal(expected, MediaSortText.Direction(key, descending));
+
+    [Fact]
+    public void Every_Sort_And_Filter_Has_A_Label() {
+        foreach (var key in Enum.GetValues<MediaSortKey>())
+            Assert.False(string.IsNullOrWhiteSpace(MediaSortText.Name(key)));
+        foreach (var filter in Enum.GetValues<MediaFilter>())
+            Assert.False(string.IsNullOrWhiteSpace(MediaSortText.Filter(filter)));
+    }
+}

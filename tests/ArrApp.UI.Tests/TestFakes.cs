@@ -101,3 +101,9 @@ internal sealed class MemorySettings : ISettingsStore {
         return Task.CompletedTask;
     }
 }
+
+internal static class TestSheets {
+    /// <summary>A real bottom-sheet service that can create the sort picker, for view-model tests.</summary>
+    public static ArrApp.UI.Navigation.BottomSheetService Create()
+        => new(new ServiceCollection().AddTransient<SortPickerViewModel>().BuildServiceProvider());
+}

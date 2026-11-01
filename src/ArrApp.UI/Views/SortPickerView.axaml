@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ArrApp.UI.ViewModels"
+             x:Class="ArrApp.UI.Views.SortPickerView"
+             x:DataType="vm:SortPickerViewModel">
+    <StackPanel Spacing="8">
+        <TextBlock Classes="title" Text="Sort by" Margin="0,0,0,4"/>
+
+        <ItemsControl ItemsSource="{Binding Options}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Spacing="8"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:SortOptionViewModel">
+                    <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="14,10"
+                            Command="{Binding $parent[UserControl].((vm:SortPickerViewModel)DataContext).PickCommand}"
+                            CommandParameter="{Binding}">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel VerticalAlignment="Center" Spacing="2">
+                                <TextBlock Classes="subtitle" Text="{Binding Name}"/>
+                                <TextBlock Classes="caption" Text="{Binding Detail}"/>
+                                <TextBlock Classes="caption" Text="{Binding Hint}" IsVisible="{Binding IsSelected}"
+                                           Foreground="{DynamicResource AccentBrush}"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="1" Text="✓" FontSize="20" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource AccentBrush}" IsVisible="{Binding IsSelected}"/>
+                        </Grid>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</UserControl>

@@ -3,7 +3,59 @@
 > **Living document.** This is the source of truth for what we're building and what's done.
 > Update it in the same commit as the work it describes.
 
-_Last updated: 2026-10-31 (first planning pass)_
+_Last updated: 2026-10-31 (through F-205c)_
+
+---
+
+## 0. Status and next steps
+
+**Where we are:** Phases 0 and 1 are built, and Phase 2 is built through F-205 (the Library tab works end to end: switch server, load the library, grid or list, search, sort, filter, pull to refresh). 300 automated tests pass (Core, Data, UI) and CI is green on everything that has been pushed. Everything has been exercised on an Android emulator against a *fake* server, never against a real Sonarr or Radarr.
+
+### Recommended next ticket: **F-206 (State components)**
+
+- **Why this one:** the Library tab currently draws its own loading, empty, error and "nothing matches" panels inline. Series detail (F-303), movie detail (F-304) and search (F-401) all need the same states. Extracting them now, while exactly one screen uses them, is small and avoids copy-pasting three more versions. It also adds the offline banner that F-207 will want.
+- **How to do it:** lift the inline panels from `MediaCollectionView.axaml` into shared controls (loading skeleton, empty state, error-with-retry, offline banner), switch the collection view over, and keep the existing view-model tests as the safety net. The error text already comes from `ArrApiException` messages, which are user-safe.
+- **Then, in this order:**
+  1. **Housekeeping, no new code:** F-301 and F-302 (the Sonarr and Radarr library tabs) are effectively delivered by F-204 and F-205. Review them against their text and tick them.
+  2. **F-303 and F-304** (series and movie detail). This is also where cards become tappable and where `GetEpisodesAsync` (already built in F-202) gets used.
+  3. **F-305** (monitor toggles), then **F-207** (library cache), then Phase 4 (lookup and add).
+- **Best use of any free hour:** if you can get at a real Sonarr or Radarr, point the app at it before building the detail screens. That is the biggest unverified risk (see below), and it is much cheaper to fix a wrong assumption in the models now than after four more screens depend on them.
+
+### Known gaps and risks
+
+- **No real server yet.** The JSON fixtures and the fake server (`tools/fake-arr`) are hand-written from the documented v3 API. Field names, URL-base handling and image paths are the most likely things to need correcting.
+- **iOS has never been launched** (F-002d). It compiles in CI. The iOS Keychain key protector in particular has not run.
+- **Self-signed HTTPS certificates are not supported** (Q5, partly decided: cleartext http is allowed on Android).
+- **Not yet checked:** light theme, large text sizes, screen-reader labels (F-606), tablet layouts.
+- **Search, filter and sort are not remembered between launches** (only grid/list is). Fine for now; revisit with F-605 if it annoys.
+
+### Open for the owner
+
+- **F-001b:** delete the old `main` branch on GitHub and remove the old outer clone on disk.
+- Unpushed work: everything after F-204 (F-205a, F-205b, F-205c and this update).
+
+### Temporary things to remove
+
+- The Discover and Activity tabs are still placeholder pages. They carry dev buttons ("Open detail", "Show sheet", "Test key vault", "Throw test error") that should go when those tabs get real screens (F-505 for Activity, F-401 for Discover). The `ThrowTestError` and `TestKeyVault` commands in `PlaceholderViewModel` go with them.
+
+### How to pick this back up (Windows dev machine)
+
+```powershell
+# Android SDK and JDK were installed here by the .NET Android workload tooling
+$env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"; $env:JAVA_HOME = "$env:LOCALAPPDATA\Android\jdk"
+dotnet build; dotnet test
+
+# Emulator (virtual device "ArrPixel", a Pixel 7 on Android 15), then install the app on it
+& "$env:ANDROID_HOME\emulator\emulator.exe" -avd ArrPixel
+dotnet build src/ArrApp.Android -t:Install -p:AdbTarget=-e -p:EmbedAssembliesIntoApk=true
+
+# A fake Sonarr (8989) and Radarr (7878) with 300 items and posters; from the emulator: http://10.0.2.2:8989, API key goodkey
+powershell -NoProfile -File tools/fake-arr/fake-arr.ps1
+```
+
+- The app's own state lives on the device under `files/ArrApp` (`arr.db`, `logs/`, `cache/images/`). `adb shell pm clear com.arrapp.mobile` gives a true first-run.
+- Windows once blocked freshly built test DLLs with "An Application Control policy has blocked this file". It cleared by itself; do not work around it, just re-run.
+- Architecture notes worth remembering: `ArrContext` (Core) is the active server; platform heads register `PlatformServices.ApiKeyProtector` at startup; the server `HttpClient` deliberately does not follow redirects (it would resend the API key); Avalonia 12.0.2 has no public virtualizing grid, so the collection view lays cards out in rows and virtualizes the rows.
 
 ---
 
@@ -90,7 +142,8 @@ Legend: `[ ]` not started · `[x]` done. IDs are stable and never reused.
 - [ ] **F-001b: Retire the old `main` branch and the old outer clone.** Needs the owner: `main` (unrelated history, now superseded) should be deleted on GitHub, and the old outer clone on disk removed so there's a single working copy. Left to the owner because both are destructive.
 - [x] **F-002a: Shared UI project + Desktop head.** Split the desktop-only template into `src/ArrApp.UI` (shared App, `MainView` UserControl, ViewModels) and `src/ArrApp.Desktop`. Solution is `ArrApp.slnx`; builds on Desktop.
 - [x] **F-002b: Android head.** `src/ArrApp.Android` builds (Avalonia 12 pattern: `AvaloniaAndroidApplication<App>` + non-generic `AvaloniaMainActivity`). Needs the `android` workload and an Android SDK/JDK; on this machine they live in `%LOCALAPPDATA%Android{Sdk,jdk}`, so set `ANDROID_HOME` / `JAVA_HOME` (or pass `-p:AndroidSdkDirectory=... -p:JavaSdkDirectory=...`).
-- [x] **F-002c: Android emulator launch.** Verified on a Pixel 7 / API 35 x86_64 AVD (`ArrPixel`). Android app projects need `<OutputType>Exe</OutputType>`. Run with: `dotnet build src/ArrApp.Android -t:Install -p:AdbTarget=-e -p:EmbedAssembliesIntoApk=true` (plus the SDK/JDK paths from F-002b).- [ ] **F-002d: iOS head.** `src/ArrApp.iOS` is scaffolded but unverified and not in the solution; needs a Mac (or a macOS CI runner, see F-008).
+- [x] **F-002c: Android emulator launch.** Verified on a Pixel 7 / API 35 x86_64 AVD (`ArrPixel`). Android app projects need `<OutputType>Exe</OutputType>`. Run with: `dotnet build src/ArrApp.Android -t:Install -p:AdbTarget=-e -p:EmbedAssembliesIntoApk=true` (plus the SDK/JDK paths from F-002b).
+- [ ] **F-002d: iOS head, run it.** `src/ArrApp.iOS` compiles (the macOS job in CI builds it for the simulator) but has never been launched, so the Keychain key protector and everything else on iOS is untested at runtime. Needs a Mac or a cloud Mac. It is still not in the local solution.
 - [x] **F-003: Add Core / Data / test projects.** Create `ArrApp.Core`, `ArrApp.Data` and the test projects, set up references, and pick a test framework. _(Done: xUnit; solution is `ArrApp.slnx`.)_
 - [x] **F-004: DI and app bootstrapping.** Service container, ViewModel resolution, and replace `ViewLocator` reflection with a trim-safe mapping.
 - [x] **F-005: Navigation service.** Stack navigation (push/pop with params), tab host, bottom-sheet host, Android back-button handling. _(Done: `NavigationService` stack, `BottomSheetService`, `TabHostViewModel`, `ShellViewModel.HandleBack` wired to `TopLevel.BackRequested` (Esc on Desktop). Verified on the Android emulator. Placeholder tabs/pages until real screens land. Building the solution now needs `ANDROID_HOME` and `JAVA_HOME` set.)_
@@ -118,7 +171,7 @@ Legend: `[ ]` not started · `[x]` done. IDs are stable and never reused.
 - [x] **F-204: `MediaCard` control.** Poster, title, year, monitored indicator, status/progress badge slot, and grid and list variants. Used for both shows and movies. _(Done: `MediaCard` with `Layout` Grid or List, driven by one `MediaCardViewModel` for series and movies; poster via `ArtImage` (fixed 2:3 via the new `AspectRatio`), monitored dot (hollow and dimmed poster when unmonitored), status badge and, for series, a thin progress line. The badge is the Arr-specific part and lives in Core (`MediaBadge`): series show `files/episodes eps` (green complete, amber partial, red none, neutral when no episodes), movies show Downloaded, Missing, Unreleased or Unmonitored. Verified on the emulator for both Sonarr and Radarr in both layouts. Not done: tapping a card (comes with the library screen), light theme and large-text checks, screen-reader labels (F-606). The Library placeholder shows three cards in both layouts as a temporary dev display.)_
 - [x] **F-205a: Collection query logic.** Search, sort (title, date added, year, size) and filter (all, monitored, unmonitored, missing, downloaded) over a list of `MediaItem`, in Core with no UI, for both Arrs. _(Done: `MediaQuery` + `MediaQueryEngine` in Core. Search matches every word against the title or year, ignoring case and accents. Sort by title (using the Arr's sort title, so "The Wire" files under W), date added, year or size, with natural directions (A-Z, newest, latest, biggest first); items without a value always go last and ties fall back to title. Filters are single-choice: all, monitored, unmonitored, missing, downloaded, defined to agree with the card badges (a test enforces that). Counts per filter are available for chip labels.)_
 - [x] **F-205b: Media collection view.** Virtualized grid/list toggle and pull-to-refresh, loading the active server's library into `MediaCard`s. _(Done: `MediaCollectionViewModel` + `MediaCollectionView` are now the Library tab. Loads the active server's library, reloads on server switch (a late result for a server already left is dropped), keeps old items when a refresh fails (toast) and shows an error panel with "Try again" when the first load fails. Grid/list toggle (remembered), pull-to-refresh plus a refresh button, and a virtualized list of rows (3+ cards per row by width): verified on the emulator with a 300-item fake library, where only 8 posters were requested for the first screen and 44 after scrolling four screens. Inline loading/empty/error states are placeholders for F-206. Also fixed along the way: any platform I/O failure during an API call now reads as "couldn't reach the server" (Android throws its own exception types), and the image loader and `ArtImage` can no longer throw. Note: this already delivers the Library tab for both Arrs, so F-301 and F-302 are largely covered; review them before building anything more.)_
-- [ ] **F-205c: Search, sort and filter controls.** The search box, sort and filter UI on the collection view, using F-205a. _(F-205 was split here per the working agreement.)_
+- [x] **F-205c: Search, sort and filter controls.** The search box, sort and filter UI on the collection view, using F-205a. _(F-205 was split here per the working agreement.)_ _(Done: debounced search box with a clear button; a sort chip ("Title · A to Z") opening a bottom sheet with the four sorts, where picking the active one again reverses it; filter chips with whole-library counts (All, Monitored, Unmonitored, Missing, Downloaded); a "Nothing matches" state with "Clear filters". Search, filter and sort reset when the active server changes and survive a refresh. Verified on the emulator against a 300-item fake library. Not remembered across launches (only grid/list is).)_
 - [ ] **F-206: State components.** Shared loading skeleton, empty state, error-with-retry, offline banner.
 - [ ] **F-207: Local caching of library data.** Cache the last fetched library per server so the app opens instantly, then refresh in the background.
 
@@ -191,3 +244,5 @@ Answer these during refinement and record the decision here.
 
 - **2026-10-31:** Moved plan to `master`; updated F-001 for the new branch setup.
 - **2026-10-31:** First planning pass: vision, architecture, phases 0–7, open questions.
+- **2026-10-31:** Phase 1 (server connections) and the start of Phase 2 built and pushed through F-204: shared models, clients, image loading and caching, `MediaCard`. F-001 and F-002 were split into sub-tickets; F-105 and F-107 and F-108 shipped with an `ArrContext` for the active server.
+- **2026-10-31:** F-205 split into F-205a/b/c and completed (search, sort, filter, virtualized grid/list, pull-to-refresh). Added a "Status and next steps" section and the `tools/fake-arr` dev tool. Recommended next ticket: F-206.
